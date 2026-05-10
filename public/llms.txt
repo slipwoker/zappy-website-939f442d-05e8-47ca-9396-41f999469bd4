@@ -1,0 +1,91 @@
+# Daria — Generative Engine Optimization Map
+
+> A unique personal brand combining scientific expertise and creative storytelling — a physicist with a PhD who is also an author, public speaker, and podcast host. The brand blends the worlds of science and literature, positioning this person as an intellectual thought leader who makes complex ideas accessible and engaging through multiple content channels.
+
+---
+
+## Pages
+
+### Home
+https://example.com
+Daria is a PhD physicist, author, and podcast host who transforms complex science into captivating stories. Explore books, talks, and episodes that make ideas unforgettable.
+
+### About
+https://example.com/about
+Meet Daria — a physicist with a PhD who became an author, speaker, and podcast voice. Discover the journey from lab to stage, and why science needs better storytellers.
+
+### Books & Writing
+https://example.com/books-writing
+Daria&#39;s books bridge the gap between rigorous science and literary beauty. Dive into writing that challenges your thinking and sparks curiosity on every single page.
+
+### Speaking
+https://example.com/speaking
+Daria delivers keynotes and lectures that electrify audiences with big ideas made accessible. Bring a world-class science communicator to your next event or conference.
+
+### Podcast
+https://example.com/podcast
+Tune into Daria&#39;s podcast where cutting-edge science collides with culture, creativity, and conversation. New episodes that rewire how you see the world — start listening now.
+
+### Contact
+https://example.com/contact
+Ready to collaborate with Daria on a book project, speaking engagement, or podcast feature? Reach out today and connect with one of science&#39;s most compelling creative voices.
+
+## Legal & Policy
+
+### Privacy Policy
+https://example.com/privacy
+Information about how user data is collected, stored, and protected.
+
+### Terms & Conditions
+https://example.com/terms
+Legal terms describing service usage, rights, and policies.
+
+### Accessibility Statement
+https://example.com/accessibility
+Information about WCAG compliance and accessibility features.
+
+---
+
+## How to Contact Us
+
+- (No contact details configured yet.)
+
+### Contact form
+- URL: https://example.com/contact
+- Endpoint: https://example.com/api/email/contact-form
+- Method: POST
+- Content-Type: application/json
+- Fields:
+  - `name` (text, required)
+  - `email` (email, required)
+  - `phone` (tel)
+  - `message` (textarea, required)
+  - `privacy_consent` (checkbox, required)
+
+---
+
+# Business Context (for LLM understanding)
+
+## About Daria
+A unique personal brand combining scientific expertise and creative storytelling — a physicist with a PhD who is also an author, public speaker, and podcast host. The brand blends the worlds of science and literature, positioning this person as an intellectual thought leader who makes complex ideas accessible and engaging through multiple content channels.
+
+## Services/Products
+- כתיבה וספרים
+- הרצאות
+- פודקאסט
+
+## Target Audience
+- Science Enthusiasts
+- Aspiring Writers
+- Educational Podcasters
+
+## Industry
+חינוך, מדע, תוכן דיגיטלי
+
+---
+
+# Machine-readable feeds
+
+- Sitemap (XML): https://example.com/sitemap.xml
+- Robots: https://example.com/robots.txt
+- Flattened page text (for LLMs): https://example.com/llms-full.txt

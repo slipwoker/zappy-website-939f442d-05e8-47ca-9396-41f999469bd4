@@ -1,0 +1,1382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="index, follow">
+    <title>Book a Talk That Moves Minds — Daria</title>
+    <meta name="description" content="Daria delivers keynotes and lectures that electrify audiences with big ideas made accessible. Bring a world-class science communicator to your next event or conference.">
+    <meta name="keywords" content="daria paramount plus, science keynote speaker, public speaker physicist, thought leadership talks">
+    
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="48x48" href="/assets/favicon-48x48.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/assets/favicon-512x512.png">
+    <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+    <!-- Zappy Analytics -->
+<script>
+(function() {
+  'use strict';
+  
+  // Configuration
+  var config = {
+    websiteId: '939f442d-05e8-47ca-9396-41f999469bd4',
+    apiUrl: 'https://api.zappy5.com/api/analytics/track',
+    sessionDuration: 30 * 60 * 1000, // 30 minutes
+    visitorDuration: 30 * 24 * 60 * 60 * 1000, // 30 days
+    trackPageViews: true,
+    trackClicks: true,
+    trackFormSubmissions: true
+  };
+  
+  // Generate or retrieve persistent visitor ID (30 days)
+  function getVisitorId() {
+    var visitorKey = 'zappy_visitor_' + config.websiteId;
+    var visitor = null;
+    
+    try {
+      visitor = localStorage.getItem(visitorKey);
+      if (visitor) {
+        var visitorData = JSON.parse(visitor);
+        var now = Date.now();
+        
+        // Check if visitor ID is still valid (30 days)
+        if (now - visitorData.created < config.visitorDuration) {
+          // Update last seen timestamp
+          visitorData.lastSeen = now;
+          localStorage.setItem(visitorKey, JSON.stringify(visitorData));
+          return visitorData.id;
+        }
+      }
+    } catch (e) {
+      console.warn('Zappy Analytics: LocalStorage not available');
+    }
+    
+    // Generate new visitor ID
+    var newVisitorId = 'zv_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    
+    try {
+      localStorage.setItem(visitorKey, JSON.stringify({
+        id: newVisitorId,
+        created: Date.now(),
+        lastSeen: Date.now()
+      }));
+    } catch (e) {
+      // Continue without local storage
+    }
+    
+    return newVisitorId;
+  }
+  
+  // Generate or retrieve session ID (30 minutes)
+  function getSessionId() {
+    var sessionKey = 'zappy_session_' + config.websiteId;
+    var session = null;
+    
+    try {
+      session = sessionStorage.getItem(sessionKey);
+      if (session) {
+        var sessionData = JSON.parse(session);
+        var now = Date.now();
+        
+        // Check if session is still valid
+        if (now - sessionData.timestamp < config.sessionDuration) {
+          // Update timestamp
+          sessionData.timestamp = now;
+          sessionStorage.setItem(sessionKey, JSON.stringify(sessionData));
+          return sessionData.id;
+        }
+      }
+    } catch (e) {
+      console.warn('Zappy Analytics: SessionStorage not available');
+    }
+    
+    // Generate new session ID
+    var newSessionId = 'zs_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    
+    try {
+      sessionStorage.setItem(sessionKey, JSON.stringify({
+        id: newSessionId,
+        timestamp: Date.now()
+      }));
+    } catch (e) {
+      // Continue without session storage
+    }
+    
+    return newSessionId;
+  }
+  
+  var visitorId = getVisitorId();
+  var sessionId = getSessionId();
+  
+  // Track an event
+  function trackEvent(eventType, data) {
+    data = data || {};
+    
+    var eventData = {
+      website_id: config.websiteId,
+      event_type: eventType,
+      page_path: window.location.pathname,
+      referrer: document.referrer || 'direct',
+      visitor_id: visitorId,
+      session_id: sessionId,
+      metadata: data
+    };
+    
+    // Use sendBeacon if available (better for page unload events)
+    if (navigator.sendBeacon) {
+      var blob = new Blob([JSON.stringify(eventData)], { type: 'application/json' });
+      navigator.sendBeacon(config.apiUrl, blob);
+    } else {
+      // Fallback to fetch
+      fetch(config.apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(eventData),
+        keepalive: true
+      }).catch(function(error) {
+        console.warn('Zappy Analytics: Failed to track event', error);
+      });
+    }
+  }
+  
+  // Track page view
+  if (config.trackPageViews) {
+    trackEvent('pageview', {
+      title: document.title,
+      url: window.location.href
+    });
+  }
+  
+  // Track clicks on important elements
+  if (config.trackClicks) {
+    document.addEventListener('click', function(e) {
+      var target = e.target;
+      
+      // Track button clicks (counted as actions)
+      if (target.tagName === 'BUTTON' || target.closest('button')) {
+        var button = target.tagName === 'BUTTON' ? target : target.closest('button');
+        trackEvent('click', {
+          element: 'button',
+          text: button.textContent.trim().substring(0, 100),
+          id: button.id || null,
+          class: button.className || null
+        });
+      }
+      
+      // Track link clicks (navigation - not counted as actions)
+      else if (target.tagName === 'A' || target.closest('a')) {
+        var link = target.tagName === 'A' ? target : target.closest('a');
+        trackEvent('navigation', {
+          element: 'link',
+          text: link.textContent.trim().substring(0, 100),
+          href: link.href,
+          external: link.hostname !== window.location.hostname
+        });
+      }
+    }, true);
+  }
+  
+  // Track form submissions
+  if (config.trackFormSubmissions) {
+    document.addEventListener('submit', function(e) {
+      var form = e.target;
+      
+      trackEvent('form_submit', {
+        form_id: form.id || null,
+        form_name: form.name || null,
+        form_action: form.action || null,
+        form_method: form.method || 'GET'
+      });
+    }, true);
+  }
+  
+  // Track time on page (send on page unload)
+  var pageLoadTime = Date.now();
+  
+  window.addEventListener('beforeunload', function() {
+    var timeOnPage = Math.floor((Date.now() - pageLoadTime) / 1000); // in seconds
+    
+    trackEvent('page_unload', {
+      time_on_page: timeOnPage,
+      page_path: window.location.pathname
+    });
+  });
+  
+  // Expose tracking function globally for custom events
+  window.zappyAnalytics = {
+    track: trackEvent,
+    getVisitorId: function() { return visitorId; },
+    getSessionId: function() { return sessionId; }
+  };
+  
+})();
+</script>
+<!-- End Zappy Analytics -->
+    <meta property="og:title" content="Book a Talk That Moves Minds — Daria">
+    <meta property="og:description" content="Daria delivers keynotes and lectures that electrify audiences with big ideas made accessible. Bring a world-class science communicator to your next event or conference.">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Book a Talk That Moves Minds — Daria">
+    <meta name="twitter:description" content="Daria delivers keynotes and lectures that electrify audiences with big ideas made accessible. Bring a world-class science communicator to your next event or conference.">
+    <meta property="og:type" content="website">
+  <meta property="og:locale" content="en_US">
+  
+  
+  
+  
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+
+
+  
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="48x48" href="/assets/favicon-48x48.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/assets/favicon-512x512.png">
+    <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+    <!-- Cookie Consent -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vanilla-cookieconsent@3/dist/cookieconsent.css" />
+    <script src="https://cdn.jsdelivr.net/npm/vanilla-cookieconsent@3/dist/cookieconsent.umd.js"></script>
+    <!-- Mickidum Accessibility Toolbar -->
+    <script src="https://cdn.jsdelivr.net/gh/mickidum/acc_toolbar/acctoolbar/acctoolbar.min.js"></script>
+    <link rel="stylesheet" href="/styles.css">
+
+    <style id="zappy-dropdown-submenu-styles">
+      /* ========== DESKTOP DROPDOWN SUBMENU STYLES ========== */
+      /* Base styles for dropdown submenus - parent must be positioned */
+      .nav-menu li:has(.sub-menu), nav li:has(.sub-menu), .navbar li:has(.sub-menu), #navMenu li:has(.sub-menu) { position: relative; }
+      /* Submenu base - hidden by default */
+      .nav-menu .sub-menu, nav .sub-menu, .navbar .sub-menu, #navMenu .sub-menu { display: block !important; position: absolute !important; top: 100%; left: 0; min-width: 220px; background: white; border-radius: 8px; box-shadow: 0 8px 25px rgba(0,0,0,0.15); padding: 8px 0; opacity: 0; visibility: hidden; transform: translateY(10px); transition: all 0.3s ease; z-index: 1000; list-style: none; pointer-events: none; }
+      /* CRITICAL: Desktop hover styles to show dropdown */
+      .nav-menu li:hover > .sub-menu, nav li:hover > .sub-menu, .navbar li:hover > .sub-menu, #navMenu li:hover > .sub-menu { opacity: 1 !important; visibility: visible !important; transform: translateY(0) !important; pointer-events: auto !important; }
+      /* Submenu item styling */
+      .sub-menu li { list-style: none; margin: 0; padding: 0; }
+      .sub-menu a { display: block !important; padding: 10px 16px !important; color: var(--text-dark, #333) !important; font-weight: 500; text-decoration: none; white-space: nowrap; transition: background-color 0.2s; }
+      .sub-menu .zappy-nav-child > a { padding-left: 28px !important; font-size: 0.9em !important; opacity: 0.85 !important; }
+      [dir="rtl"] .sub-menu .zappy-nav-child > a, html[lang="he"] .sub-menu .zappy-nav-child > a, html[lang="ar"] .sub-menu .zappy-nav-child > a { padding-left: 10px !important; padding-right: 28px !important; }
+      .sub-menu .zappy-nav-parent > a { font-weight: 600 !important; }
+      .sub-menu a:hover { background-color: #f5f5f5; }
+      /* RTL (Hebrew/Arabic) dropdown positioning */
+      [dir="rtl"] .nav-menu .sub-menu, [dir="rtl"] nav .sub-menu, [dir="rtl"] .navbar .sub-menu, html[lang="he"] .nav-menu .sub-menu, html[lang="he"] nav .sub-menu, html[lang="he"] .navbar .sub-menu, html[lang="ar"] .nav-menu .sub-menu, html[lang="ar"] nav .sub-menu, html[lang="ar"] .navbar .sub-menu { left: auto !important; right: 0 !important; }
+      /* Hide empty dropdown menus (exclude catalog sub-menus that use <a> children instead of <li>) */
+      .sub-menu:empty, .sub-menu:not(:has(li:not(.zappy-hidden-menu-item))):not(:has(> a)), .sub-menu:not(:has(li)):not(:has(> a)) { display: none !important; opacity: 0 !important; visibility: hidden !important; pointer-events: none !important; }
+      /* Desktop: show submenu on Menu Group hover */
+      li:has(.menu-group-title):hover > .sub-menu { opacity: 1 !important; visibility: visible !important; transform: translateY(0) !important; pointer-events: auto !important; }
+      /* Menu Group title styling */
+      .nav-menu > li > .menu-group-title, #navMenu > li > .menu-group-title { display: inline-block; padding: 0.5rem 1rem; cursor: default; user-select: none; }
+      
+      /* ========== MOBILE SUBMENU STYLES ========== */
+      @media (max-width: 768px) {
+        .nav-menu .sub-menu, nav .sub-menu, .navbar .sub-menu, #navMenu .sub-menu { position: static !important; transform: none !important; box-shadow: none !important; background: transparent !important; max-height: 0; overflow: hidden; opacity: 0; visibility: hidden; transition: max-height 0.3s ease, opacity 0.3s ease; padding: 0 !important; border-radius: 0 !important; }
+        .navbar .sub-menu.mobile-expanded, .nav-menu .sub-menu.mobile-expanded, #navMenu .sub-menu.mobile-expanded { max-height: none !important; overflow-y: visible !important; opacity: 1 !important; visibility: visible !important; padding: 8px 0 8px 16px !important; }
+        [dir="rtl"] .sub-menu.mobile-expanded, html[lang="he"] .sub-menu.mobile-expanded { padding: 8px 16px 8px 0 !important; }
+        /* Disable hover behavior on mobile */
+        .nav-menu li:hover > .sub-menu, nav li:hover > .sub-menu, .navbar li:hover > .sub-menu, #navMenu li:hover > .sub-menu { opacity: 0; visibility: hidden; pointer-events: none; }
+        .nav-menu li > .sub-menu.mobile-expanded, nav li > .sub-menu.mobile-expanded, .navbar li > .sub-menu.mobile-expanded, #navMenu li > .sub-menu.mobile-expanded { opacity: 1 !important; visibility: visible !important; pointer-events: auto !important; }
+        .nav-menu li:has(.sub-menu), nav li:has(.sub-menu), .navbar li:has(.sub-menu), #navMenu li:has(.sub-menu) { display: flex !important; flex-wrap: wrap !important; align-items: center !important; position: relative !important; min-height: 44px !important; }
+        .nav-menu li:has(.sub-menu) > a, nav li:has(.sub-menu) > a, .navbar li:has(.sub-menu) > a, #navMenu li:has(.sub-menu) > a { flex: 1 !important; min-width: 0 !important; }
+        .nav-menu li:has(.sub-menu) > .menu-group-title, nav li:has(.sub-menu) > .menu-group-title, .navbar li:has(.sub-menu) > .menu-group-title, #navMenu li:has(.sub-menu) > .menu-group-title { flex: 1 !important; min-width: 0 !important; padding: 0 !important; line-height: inherit !important; }
+        .nav-menu li:has(.sub-menu) > .sub-menu, nav li:has(.sub-menu) > .sub-menu, .navbar li:has(.sub-menu) > .sub-menu, #navMenu li:has(.sub-menu) > .sub-menu { flex-basis: 100% !important; width: 100% !important; }
+        .nav-menu li:has(.sub-menu) > a [class*="chevron"], .nav-menu li:has(.sub-menu) > a [class*="arrow"], .nav-menu li:has(.sub-menu) > a .fa-chevron-down, .nav-menu li:has(.sub-menu) > a .fa-angle-down, nav li:has(.sub-menu) > a [class*="chevron"], nav li:has(.sub-menu) > a [class*="arrow"], #navMenu li:has(.sub-menu) > a [class*="chevron"], #navMenu li:has(.sub-menu) > a [class*="arrow"] { display: none !important; visibility: hidden !important; }
+        .mobile-submenu-toggle { display: flex !important; align-items: center !important; justify-content: center !important; width: 44px !important; height: auto !important; background: transparent !important; border: none !important; cursor: pointer !important; color: var(--text-light) !important; position: static !important; flex-shrink: 0 !important; align-self: stretch !important; z-index: 2 !important; padding: 0 !important; margin: 0 !important; }
+        .mobile-submenu-toggle::after { content: '' !important; width: 0 !important; height: 0 !important; border-left: 6px solid transparent !important; border-right: 6px solid transparent !important; border-top: 7px solid currentColor !important; transition: transform 0.3s ease !important; }
+        .mobile-submenu-toggle.expanded::after { transform: rotate(180deg) !important; }
+        .sub-menu a { padding: 10px 0 !important; display: block !important; color: var(--text-light) !important; white-space: normal !important; }
+        .sub-menu .zappy-nav-child > a { padding-left: 28px !important; font-size: 0.9em !important; opacity: 0.85 !important; }
+        [dir="rtl"] .sub-menu .zappy-nav-child > a, html[lang="he"] .sub-menu .zappy-nav-child > a, html[lang="ar"] .sub-menu .zappy-nav-child > a { padding-left: 0 !important; padding-right: 28px !important; }
+        .sub-menu .zappy-nav-parent > a { font-weight: 600 !important; }
+        .nav-menu.active, #navMenu.active { max-width: 100vw !important; overflow-x: hidden !important; box-sizing: border-box !important; }
+        .navbar .sub-menu li a, nav.navbar .sub-menu li a, .zappy-products-dropdown .sub-menu a { color: var(--text-light) !important; }
+      }
+      @media (min-width: 769px) { .mobile-submenu-toggle { display: none !important; } }
+    </style>
+
+    <style id="zappy-widget-visibility">
+      html[dir="rtl"] .whatsapp-float { right: 20px !important; left: auto !important; }
+      html[dir="ltr"] .whatsapp-float, html:not([dir]) .whatsapp-float { left: 20px !important; right: auto !important; }
+      html[dir="rtl"] #mic-access-tool-general-button, html[dir="rtl"] .mic-access-tool-general-button,
+      html[dir="rtl"] #mic-init-access-tool .mic-access-tool-general-button,
+      html[dir="rtl"] #mic-init-access-tool #mic-access-tool-general-button,
+      html[dir="rtl"] ._access-icon { left: 20px !important; right: auto !important; }
+      html[dir="ltr"] #mic-access-tool-general-button, html[dir="ltr"] .mic-access-tool-general-button,
+      html[dir="ltr"] #mic-init-access-tool .mic-access-tool-general-button,
+      html[dir="ltr"] #mic-init-access-tool #mic-access-tool-general-button,
+      html[dir="ltr"] ._access-icon,
+      html:not([dir]) #mic-access-tool-general-button, html:not([dir]) .mic-access-tool-general-button,
+      html:not([dir]) #mic-init-access-tool .mic-access-tool-general-button,
+      html:not([dir]) #mic-init-access-tool #mic-access-tool-general-button,
+      html:not([dir]) ._access-icon { right: 20px !important; left: auto !important; }
+      @media (max-width: 768px) { .whatsapp-float { display: flex !important; } }
+      @media (min-width: 769px) { .whatsapp-float { display: flex !important; } }
+      @media (max-width: 768px) {
+        #mic-access-tool-general-button, .mic-access-tool-general-button,
+        #mic-init-access-tool .mic-access-tool-general-button, #mic-init-access-tool #mic-access-tool-general-button,
+        ._access-icon { display: flex !important; visibility: visible !important; opacity: 1 !important; pointer-events: auto !important; }
+        #mic-access-tool-box.opened-mic-access-tool, .mic-access-tool-box.opened-mic-access-tool,
+        #mic-init-access-tool #mic-access-tool-box.opened-mic-access-tool {
+          visibility: visible !important; opacity: 1 !important; pointer-events: auto !important;
+        }
+      }
+      @media (min-width: 769px) {
+        #mic-access-tool-general-button, .mic-access-tool-general-button,
+        #mic-init-access-tool .mic-access-tool-general-button, #mic-init-access-tool #mic-access-tool-general-button,
+        ._access-icon { display: flex !important; visibility: visible !important; opacity: 1 !important; pointer-events: auto !important; }
+        #mic-access-tool-box.opened-mic-access-tool, .mic-access-tool-box.opened-mic-access-tool,
+        #mic-init-access-tool #mic-access-tool-box.opened-mic-access-tool {
+          visibility: visible !important; opacity: 1 !important; pointer-events: auto !important;
+        }
+      }
+    </style>
+</head>
+<body>
+<nav class="navbar">
+  <button class="mobile-toggle" id="mobileToggle" aria-label="Menu">
+    <svg class="hamburger-icon" width="24" height="24" viewBox="0 0 24 24" fill="none">
+      <path d="M3 12h18M3 6h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+    </svg>
+    <svg class="close-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" style="display: none;">
+      <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+    </svg>
+  </button>
+
+  <button class="phone-header-btn" data-phone="[business_phone]" aria-label="Call">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+    </svg>
+  </button>
+
+  <div class="nav-container">
+    <div class="nav-brand">
+      <a href="/" class="logo-link"><img class="logo" src="/assets/site-speaking-image-1.webp" alt="Daria"></a>
+    </div>
+
+    <ul class="nav-menu" id="navMenu"><li><a href="/">Home</a></li><li><a href="/about">About</a></li><li><a href="/books-writing">Books &amp; Writing</a></li><li><a href="/speaking">Speaking</a></li><li><a href="/podcast">Podcast</a></li></ul>
+
+    <div class="nav-cta-container">
+      <a href="/contact" class="nav-cta-btn">Contact</a>
+    </div>
+  </div>
+</nav>
+<script>
+
+// Navbar Mobile Menu Toggle and Contrast Fix
+(function() {
+  // Use 'load' event instead of 'DOMContentLoaded' to ensure we run AFTER all other scripts
+  window.addEventListener('load', function() {
+    
+    // FIX MOBILE BUTTON CONTRAST
+    // Detect navbar background color and apply contrasting color to mobile buttons
+    const navbar = document.querySelector('.navbar, nav, header');
+    if (!navbar) {
+      console.log('[Navbar] Navbar element not found');
+      return;
+    }
+    
+    // DECLARE VARIABLES EARLY to avoid Temporal Dead Zone errors
+    // These are used in multiple places below
+    let mobileToggle = document.getElementById('mobileToggle') ||
+                       document.querySelector('.mobile-toggle') ||
+                       document.querySelector('.hamburger') ||
+                       document.querySelector('.hamburger-menu') ||
+                       document.querySelector('.menu-toggle') ||
+                       document.querySelector('.burger-menu') ||
+                       document.querySelector('[aria-label="Menu"]') ||
+                       document.querySelector('[aria-label="תפריט"]');
+    
+    const phoneBtn = document.querySelector('.phone-header-btn');
+    
+    const computedStyle = window.getComputedStyle(navbar);
+    let bgColor = computedStyle.backgroundColor;
+    
+    console.log('[Navbar] Initial navbar background:', bgColor);
+    
+    // Check if background is transparent or rgba with 0 alpha
+    const isTransparent = bgColor === 'transparent' || 
+                         bgColor === 'rgba(0, 0, 0, 0)' ||
+                         (bgColor.startsWith('rgba') && bgColor.includes(', 0)'));
+    
+    if (isTransparent) {
+      // Check for background-image or gradient
+      const bgImage = computedStyle.backgroundImage;
+      if (bgImage && bgImage !== 'none') {
+        console.log('[Navbar] Navbar has background image/gradient, using dark text');
+        bgColor = 'rgb(240, 240, 240)'; // Assume light background
+      } else {
+        // Transparent navbar - check body background
+        const bodyBg = window.getComputedStyle(document.body).backgroundColor;
+        console.log('[Navbar] Navbar transparent, using body background:', bodyBg);
+        bgColor = bodyBg;
+      }
+    }
+    
+    // Calculate luminance to determine if background is light or dark
+    const rgb = bgColor.match(/\d+/g);
+    if (rgb && rgb.length >= 3) {
+      const r = parseInt(rgb[0]);
+      const g = parseInt(rgb[1]);
+      const b = parseInt(rgb[2]);
+      const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+      
+      // Mobile button colors are set by Claude's AI-generated CSS (same as .nav-menu a)
+      // No dynamic color overrides needed - colors come from the generated navbar CSS
+      console.log('[Navbar] Mobile button colors preserved from Claude CSS (luminance:', luminance.toFixed(2) + ')');
+      
+      // FIX ICON SIZES - Ensure SVGs are properly sized and visible
+      // INJECT CRITICAL CSS TO OVERRIDE ANY CONFLICTING RULES
+      const criticalCSS = document.createElement('style');
+      criticalCSS.id = 'zappy-mobile-nav-fix';
+      const htmlLang = document.documentElement.lang || 'en';
+      const htmlDir = document.documentElement.dir || 'ltr';
+      // Check both dir attribute AND lang for RTL detection
+      // dir="rtl" is the most reliable indicator
+      const isRTL = htmlDir === 'rtl' || htmlLang === 'he' || htmlLang === 'ar';
+      
+      criticalCSS.textContent = `
+        /* Hide mobile buttons on desktop, show only on mobile */
+        @media (min-width: 769px) {
+          .mobile-toggle,
+          .phone-header-btn {
+            display: none !important;
+          }
+        }
+        
+        /* Show and position mobile buttons correctly on mobile */
+        @media (max-width: 768px) {
+          .mobile-toggle,
+          .phone-header-btn {
+            position: absolute !important;
+            top: 0 !important;
+            bottom: 0 !important;
+            margin-top: auto !important;
+            margin-bottom: auto !important;
+            z-index: 1001 !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            width: 36px !important;
+            height: 36px !important;
+            border-radius: 50% !important;
+            border: none !important;
+            cursor: pointer !important;
+            padding: 6px !important;
+            background: none !important;
+            color: var(--nav-text, var(--text-light)) !important;
+            touch-action: manipulation !important;
+            -webkit-tap-highlight-color: transparent !important;
+          }
+          
+          /* LTR positioning (default): hamburger LEFT, phone RIGHT */
+          html:not([dir="rtl"]):not([lang="he"]):not([lang="ar"]) .mobile-toggle,
+          html[dir="ltr"] .mobile-toggle {
+            left: 12px !important;
+            right: auto !important;
+          }
+          html:not([dir="rtl"]):not([lang="he"]):not([lang="ar"]) .phone-header-btn,
+          html[dir="ltr"] .phone-header-btn {
+            right: 12px !important;
+            left: auto !important;
+          }
+          
+          /* RTL positioning: hamburger RIGHT, phone LEFT */
+          html[dir="rtl"] .mobile-toggle,
+          html[lang="he"] .mobile-toggle,
+          html[lang="ar"] .mobile-toggle {
+            right: 12px !important;
+            left: auto !important;
+          }
+          html[dir="rtl"] .phone-header-btn,
+          html[lang="he"] .phone-header-btn,
+          html[lang="ar"] .phone-header-btn {
+            left: 12px !important;
+            right: auto !important;
+          }
+          
+          /* CRITICAL: Ensure nav-container has min-height on mobile */
+          /* All children are positioned absolutely/fixed on mobile, so height:auto collapses to 0 */
+          .nav-container {
+            min-height: 70px !important;
+            position: relative !important;
+          }
+          
+          /* Ensure SVG icons are properly sized and inherit color */
+          .mobile-toggle svg,
+          .phone-header-btn svg {
+            width: 24px !important;
+            height: 24px !important;
+            /* Don't force display - let JavaScript control hamburger/close toggle */
+          }
+          
+          /* Reset nav-cta-container on mobile - remove desktop box-shadow/padding */
+          /* that creates a visible ghost box when CTA button is hidden */
+          .nav-cta-container {
+            box-shadow: none !important;
+            padding: 0 !important;
+          }
+          
+          /* Hide nav-cta-container entirely on mobile when there's no lang-switcher */
+          /* (only the CTA button is inside, and it's hidden on mobile) */
+          .nav-cta-container:not(:has(.lang-switcher)) {
+            display: none !important;
+          }
+          
+          /* CRITICAL: Prevent hero image fade gradient from bleeding over headline text */
+          /* The .image-fade-gradient has bottom: -30px (extends below parent) */
+          /* On mobile stacked layout, this overlaps the h1 text below the image */
+          .hero-image-column {
+            overflow: hidden !important;
+          }
+          .image-fade-gradient {
+            bottom: 0 !important;
+          }
+          
+          /* Hide desktop language switcher on mobile - hamburger menu handles it */
+          /* High specificity to override stored CSS */
+          .lang-switcher,
+          .nav-cta-container .lang-switcher,
+          .nav-container .lang-switcher,
+          .navbar .lang-switcher,
+          .navbar .nav-cta-container .lang-switcher {
+            display: none !important;
+          }
+        }
+      `;
+      
+      // Remove existing fix if present and inject new one
+      const existing = document.getElementById('zappy-mobile-nav-fix');
+      if (existing) existing.remove();
+      document.head.appendChild(criticalCSS);
+      
+      console.log('[Navbar] Critical CSS injected for mobile nav positioning');
+      
+      // ONLY apply inline positioning styles on mobile viewport
+      // On desktop, the CSS handles hiding these buttons with display: none
+      // Inline styles were breaking desktop layout by overriding CSS
+      const isMobileViewport = window.innerWidth <= 768;
+      
+      if (mobileToggle) {
+        // Icon sizing applies to all viewports for consistency
+        const hamburgerIcon = mobileToggle.querySelector('.hamburger-icon');
+        const closeIcon = mobileToggle.querySelector('.close-icon');
+        
+        if (hamburgerIcon) {
+          hamburgerIcon.style.setProperty('width', '24px', 'important');
+          hamburgerIcon.style.setProperty('height', '24px', 'important');
+          hamburgerIcon.style.setProperty('display', 'block', 'important'); // Show hamburger by default
+        }
+        if (closeIcon) {
+          closeIcon.style.setProperty('width', '24px', 'important');
+          closeIcon.style.setProperty('height', '24px', 'important');
+          closeIcon.style.setProperty('display', 'none', 'important'); // Hide close icon by default
+        }
+        
+        // ONLY set positioning inline styles on mobile
+        if (isMobileViewport) {
+          mobileToggle.style.setProperty('position', 'absolute', 'important');
+          mobileToggle.style.setProperty('top', '0', 'important');
+          mobileToggle.style.setProperty('bottom', '0', 'important');
+          mobileToggle.style.setProperty('margin-top', 'auto', 'important');
+          mobileToggle.style.setProperty('margin-bottom', 'auto', 'important');
+          mobileToggle.style.setProperty('z-index', '1001', 'important');
+          
+          // Clear any inline left/right so CSS can take over based on html[dir]
+          mobileToggle.style.removeProperty('left');
+          mobileToggle.style.removeProperty('right');
+          
+          console.log('[Navbar] Mobile toggle positioning applied (mobile viewport)');
+        } else {
+          // On desktop, clear any positioning styles to let CSS handle it
+          mobileToggle.style.removeProperty('position');
+          mobileToggle.style.removeProperty('top');
+          mobileToggle.style.removeProperty('transform');
+          mobileToggle.style.removeProperty('z-index');
+          mobileToggle.style.removeProperty('left');
+          mobileToggle.style.removeProperty('right');
+          console.log('[Navbar] Desktop viewport - cleared mobile toggle inline positioning');
+        }
+      }
+      
+      if (phoneBtn) {
+        // Icon sizing applies to all viewports
+        const phoneIcon = phoneBtn.querySelector('svg');
+        if (phoneIcon) {
+          phoneIcon.style.width = '24px';
+          phoneIcon.style.height = '24px';
+          phoneIcon.setAttribute('width', '24');
+          phoneIcon.setAttribute('height', '24');
+        }
+        
+        // ONLY set positioning inline styles on mobile
+        if (isMobileViewport) {
+          phoneBtn.style.setProperty('position', 'absolute', 'important');
+          phoneBtn.style.setProperty('top', '0', 'important');
+          phoneBtn.style.setProperty('bottom', '0', 'important');
+          phoneBtn.style.setProperty('margin-top', 'auto', 'important');
+          phoneBtn.style.setProperty('margin-bottom', 'auto', 'important');
+          phoneBtn.style.setProperty('z-index', '1001', 'important');
+          
+          // Clear any inline left/right so CSS can take over based on html[dir]
+          phoneBtn.style.removeProperty('left');
+          phoneBtn.style.removeProperty('right');
+          
+          console.log('[Navbar] Phone button positioning applied (mobile viewport)');
+        } else {
+          // On desktop, clear any positioning styles to let CSS handle it
+          phoneBtn.style.removeProperty('position');
+          phoneBtn.style.removeProperty('top');
+          phoneBtn.style.removeProperty('transform');
+          phoneBtn.style.removeProperty('z-index');
+          phoneBtn.style.removeProperty('left');
+          phoneBtn.style.removeProperty('right');
+          console.log('[Navbar] Desktop viewport - cleared phone button inline positioning');
+        }
+      }
+    } else {
+      console.log('[Navbar] Could not parse background color:', bgColor);
+    }
+    
+    // MOBILE MENU TOGGLE
+    // Re-query in case DOM changed (mobileToggle already declared at top of function)
+    mobileToggle = document.getElementById('mobileToggle') ||
+                   document.querySelector('.mobile-toggle') ||
+                   document.querySelector('.hamburger') ||
+                   document.querySelector('.hamburger-menu') ||
+                   document.querySelector('.menu-toggle') ||
+                   document.querySelector('.burger-menu') ||
+                   document.querySelector('[aria-label="Menu"]') ||
+                   document.querySelector('[aria-label="תפריט"]');
+    
+    // EXPANDED SEARCH: Find nav menu by ID or class
+    const navMenu = document.getElementById('navMenu') ||
+                  document.querySelector('.nav-menu') ||
+                  document.querySelector('.nav-links') ||
+                  document.querySelector('nav ul:not(.submenu)');
+    
+    if (!mobileToggle || !navMenu) {
+      console.log('[Navbar] Mobile toggle or menu not found:', { toggle: !!mobileToggle, menu: !!navMenu });
+      return;
+    }
+    
+    // Ensure navMenu has ID for CSS targeting
+    if (!navMenu.id) {
+      navMenu.id = 'navMenu';
+    }
+    
+    console.log('[Navbar] Initializing mobile menu...');
+    
+    // Remove any existing event listeners by cloning the button
+    const newToggle = mobileToggle.cloneNode(true);
+    mobileToggle.parentNode.replaceChild(newToggle, mobileToggle);
+    
+    // Toggle menu handler (shared by click and touchend)
+    function handleToggle(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      
+      const hamburgerIcon = newToggle.querySelector('.hamburger-icon');
+      const closeIcon = newToggle.querySelector('.close-icon');
+      const isActive = navMenu.classList.contains('active');
+      
+      if (isActive) {
+        // Close menu
+        navMenu.classList.remove('active');
+        if (hamburgerIcon) hamburgerIcon.style.setProperty('display', 'block', 'important');
+        if (closeIcon) closeIcon.style.setProperty('display', 'none', 'important');
+        document.body.style.overflow = '';
+        console.log('[Navbar] Menu closed');
+      } else {
+        // Open menu
+        navMenu.classList.add('active');
+        if (hamburgerIcon) hamburgerIcon.style.setProperty('display', 'none', 'important');
+        if (closeIcon) closeIcon.style.setProperty('display', 'block', 'important');
+        document.body.style.overflow = 'hidden';
+        console.log('[Navbar] Menu opened');
+      }
+    }
+    
+    // Use click for desktop/emulation and touchend as iOS Safari fallback.
+    // Prevent double-fire with a timestamp guard.
+    var lastToggleTime = 0;
+    function guardedToggle(e) {
+      var now = Date.now();
+      if (now - lastToggleTime < 300) return;
+      lastToggleTime = now;
+      handleToggle(e);
+    }
+    
+    newToggle.addEventListener('click', guardedToggle);
+    newToggle.addEventListener('touchend', guardedToggle);
+    
+    // Close menu when clicking nav links (but NOT dropdown toggles)
+    const navLinks = navMenu.querySelectorAll('a');
+    navLinks.forEach(function(link) {
+      link.addEventListener('click', function() {
+        // Don't close if it's a dropdown child (unless it's a real navigation link)
+        if (this.getAttribute('href') === '#') return;
+        
+        const hamburgerIcon = newToggle.querySelector('.hamburger-icon');
+        const closeIcon = newToggle.querySelector('.close-icon');
+        
+        navMenu.classList.remove('active');
+        if (hamburgerIcon) hamburgerIcon.style.setProperty('display', 'block', 'important');
+        if (closeIcon) closeIcon.style.setProperty('display', 'none', 'important');
+        document.body.style.overflow = '';
+        console.log('[Navbar] Menu closed (link clicked)');
+      });
+    });
+    
+    // DROPDOWN MENU TOGGLE (for mobile and touch devices)
+    var dropdownToggles = navMenu.querySelectorAll('.dropdown-toggle');
+    dropdownToggles.forEach(function(toggle) {
+      toggle.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var parent = this.closest('.nav-dropdown');
+        if (!parent) return;
+        
+        // Close other open dropdowns at the same level
+        var siblings = parent.parentNode.querySelectorAll('.nav-dropdown.open');
+        siblings.forEach(function(sib) {
+          if (sib !== parent) sib.classList.remove('open');
+        });
+        
+        parent.classList.toggle('open');
+        console.log('[Navbar] Dropdown toggled:', parent.classList.contains('open') ? 'open' : 'closed');
+      });
+    });
+    
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', function(e) {
+      if (!e.target.closest('.nav-dropdown')) {
+        var openDropdowns = document.querySelectorAll('.nav-dropdown.open');
+        openDropdowns.forEach(function(dd) { dd.classList.remove('open'); });
+      }
+    });
+    
+    console.log('[Navbar] Dropdown handlers initialized for ' + dropdownToggles.length + ' dropdowns');
+    
+    // Phone button functionality (phoneBtn already declared at top of function)
+    if (phoneBtn) {
+      phoneBtn.addEventListener('click', function() {
+        // Get phone number from placeholder in page or use default
+        const phoneLinks = document.querySelectorAll('a[href^="tel:"]');
+        const phoneNumber = phoneLinks.length > 0 
+          ? phoneLinks[0].getAttribute('href').replace('tel:', '')
+          : '[business_phone]';
+        
+        window.location.href = 'tel:' + phoneNumber;
+        console.log('[Navbar] Phone button clicked');
+      });
+    }
+    
+    console.log('[Navbar] Mobile menu initialized successfully');
+    
+    // WhatsApp button visibility is now controlled via CSS (siteSettings).
+    // No JS-based desktop hiding — the button is visible on both mobile and desktop by default.
+  });
+})();
+
+</script>
+  
+  <main>
+    <section class="speaking-intro-section" data-layout-spec="Speaking-intro">
+  <!-- Decorative: Celestial orbit rings -->
+  <div class="si-orbit-decoration" aria-hidden="true">
+    <svg data-no-icon-edit="true" aria-hidden="true" viewBox="0 0 320 320" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="160" cy="160" r="140" stroke="rgba(200,151,58,0.12)" stroke-width="1"></circle>
+      <circle cx="160" cy="160" r="100" stroke="rgba(200,151,58,0.10)" stroke-width="1"></circle>
+      <circle cx="160" cy="160" r="60" stroke="rgba(200,151,58,0.08)" stroke-width="1"></circle>
+      <circle cx="160" cy="20" r="4" fill="rgba(200,151,58,0.25)"></circle>
+      <circle cx="300" cy="160" r="3" fill="rgba(200,151,58,0.20)"></circle>
+      <circle cx="80" cy="270" r="3.5" fill="rgba(200,151,58,0.18)"></circle>
+    </svg>
+  </div>
+
+  <!-- Decorative: Sound wave lines -->
+  <div class="si-wave-decoration" aria-hidden="true">
+    <svg data-no-icon-edit="true" aria-hidden="true" viewBox="0 0 320 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="0" y="32" width="4" height="16" fill="rgba(200,151,58,0.18)" rx="2"></rect>
+      <rect x="12" y="20" width="4" height="40" fill="rgba(200,151,58,0.18)" rx="2"></rect>
+      <rect x="24" y="8" width="4" height="64" fill="rgba(200,151,58,0.18)" rx="2"></rect>
+      <rect x="36" y="24" width="4" height="32" fill="rgba(200,151,58,0.18)" rx="2"></rect>
+      <rect x="48" y="16" width="4" height="48" fill="rgba(200,151,58,0.18)" rx="2"></rect>
+      <rect x="60" y="28" width="4" height="24" fill="rgba(200,151,58,0.18)" rx="2"></rect>
+      <rect x="72" y="12" width="4" height="56" fill="rgba(200,151,58,0.18)" rx="2"></rect>
+      <rect x="84" y="30" width="4" height="20" fill="rgba(200,151,58,0.18)" rx="2"></rect>
+      <rect x="96" y="20" width="4" height="40" fill="rgba(200,151,58,0.18)" rx="2"></rect>
+      <rect x="108" y="36" width="4" height="8" fill="rgba(200,151,58,0.18)" rx="2"></rect>
+      <rect x="120" y="18" width="4" height="44" fill="rgba(200,151,58,0.18)" rx="2"></rect>
+      <rect x="132" y="26" width="4" height="28" fill="rgba(200,151,58,0.18)" rx="2"></rect>
+      <rect x="144" y="10" width="4" height="60" fill="rgba(200,151,58,0.18)" rx="2"></rect>
+      <rect x="156" y="22" width="4" height="36" fill="rgba(200,151,58,0.18)" rx="2"></rect>
+      <rect x="168" y="32" width="4" height="16" fill="rgba(200,151,58,0.18)" rx="2"></rect>
+      <rect x="180" y="14" width="4" height="52" fill="rgba(200,151,58,0.18)" rx="2"></rect>
+      <rect x="192" y="28" width="4" height="24" fill="rgba(200,151,58,0.18)" rx="2"></rect>
+      <rect x="204" y="20" width="4" height="40" fill="rgba(200,151,58,0.18)" rx="2"></rect>
+      <rect x="216" y="34" width="4" height="12" fill="rgba(200,151,58,0.18)" rx="2"></rect>
+      <rect x="228" y="16" width="4" height="48" fill="rgba(200,151,58,0.18)" rx="2"></rect>
+      <rect x="240" y="24" width="4" height="32" fill="rgba(200,151,58,0.18)" rx="2"></rect>
+      <rect x="252" y="30" width="4" height="20" fill="rgba(200,151,58,0.18)" rx="2"></rect>
+      <rect x="264" y="12" width="4" height="56" fill="rgba(200,151,58,0.18)" rx="2"></rect>
+      <rect x="276" y="26" width="4" height="28" fill="rgba(200,151,58,0.18)" rx="2"></rect>
+      <rect x="288" y="36" width="4" height="8" fill="rgba(200,151,58,0.18)" rx="2"></rect>
+      <rect x="300" y="18" width="4" height="44" fill="rgba(200,151,58,0.18)" rx="2"></rect>
+      <rect x="312" y="28" width="4" height="24" fill="rgba(200,151,58,0.18)" rx="2"></rect>
+    </svg>
+  </div>
+
+  <!-- Paper grain texture overlay -->
+  <div class="si-grain-overlay" aria-hidden="true"></div>
+
+  <div class="si-container">
+
+    <!-- Centered header block -->
+    <div class="si-header">
+      <div class="si-amber-rule" aria-hidden="true"></div>
+      <small class="si-eyebrow">Lectures &amp; Public Talks</small>
+      <h1 class="si-title">The Stage Is<br><em>Another Lab</em></h1>
+      <p class="si-subtitle">Daria brings the precision of a physicist and the soul of a storyteller to every stage — transforming complex ideas into experiences that resonate long after the applause fades.</p>
+    </div>
+
+    <!-- Image + Copy block -->
+    <div class="si-body">
+
+      <!-- Image column -->
+      <figure class="si-image-col">
+        <img data-placeholder="speaking-intro-image-1" data-context="A dramatic, cinematic portrait of a female physicist and author on a dimly lit conference stage — warm spotlight illuminating her face and hands as she speaks passionately to an audience. Dark theatrical background, warm amber and violet tones, microphone stand visible, conveying intellectual authority and storytelling presence. High-contrast editorial photography style." width="680" height="820" src="/assets/site-speaking-intro-image-1.webp" alt="Daria speaking on stage at a conference — physicist, author, and public intellectual">
+        <figcaption class="si-image-caption">
+          <span class="si-caption-tag">Live</span>
+          Keynotes • Conferences • Cultural Events
+        </figcaption>
+      </figure>
+
+      <!-- Copy column -->
+      <aside class="si-copy-col">
+        <div class="si-copy-inner">
+
+          <div class="si-stat-row">
+            <div class="si-stat">
+              <span class="si-stat-num">120<span class="si-stat-plus">+</span></span>
+              <span class="si-stat-label">Talks Delivered</span>
+            </div>
+            <div class="si-stat-divider" aria-hidden="true"></div>
+            <div class="si-stat">
+              <span class="si-stat-num">18</span>
+              <span class="si-stat-label">Countries</span>
+            </div>
+          </div>
+
+          <div class="si-amber-rule si-amber-rule--copy" aria-hidden="true"></div>
+
+          <h2 class="si-copy-heading">Where Science Meets the Spoken Word</h2>
+
+          <p class="si-copy-body">Daria holds a PhD in physics and has spent years translating the universe's most intricate ideas into language anyone can feel. As a lecturer, she doesn't simply present information — she builds a narrative arc that moves from curiosity to revelation.</p>
+
+          <p class="si-copy-body">Her talks draw on her dual identity as a scientist and a published author, weaving research, personal story, and literary craft into a singular experience. From academic symposia to TEDx stages, from literary festivals to media conversations — Daria arrives prepared to challenge, inspire, and connect.</p>
+
+          <ul class="si-topics">
+            <li class="si-topic-item">
+              <span class="si-topic-dot" aria-hidden="true"></span>
+              <span>The Physics of Creativity &amp; Imagination</span>
+            </li>
+            <li class="si-topic-item">
+              <span class="si-topic-dot" aria-hidden="true"></span>
+              <span>Science, Story &amp; the Art of Explanation</span>
+            </li>
+            <li class="si-topic-item">
+              <span class="si-topic-dot" aria-hidden="true"></span>
+              <span>Women in Science &amp; Intellectual Courage</span>
+            </li>
+            <li class="si-topic-item">
+              <span class="si-topic-dot" aria-hidden="true"></span>
+              <span>The Universe as a Literary Text</span>
+            </li>
+          </ul>
+
+          <div class="si-cta-row">
+            <a href="/contact" class="si-btn-primary">Book a Talk</a>
+            <a href="/contact" class="si-btn-ghost">Request a Brochure</a>
+          </div>
+
+        </div>
+      </aside>
+
+    </div>
+  </div>
+</section>
+
+<section class="speaking-services-section" data-layout-spec="Speaking-services">
+  <!-- Paper grain overlay -->
+  <div class="speaking-services-grain" aria-hidden="true"></div>
+
+  <!-- Celestial orbit decoration -->
+  <svg class="speaking-services-orbit" data-no-icon-edit="true" aria-hidden="true" viewBox="0 0 280 280" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="140" cy="140" r="60" stroke="#C8973A" stroke-width="0.8" opacity="0.12"></circle>
+    <circle cx="140" cy="140" r="100" stroke="#C8973A" stroke-width="0.6" opacity="0.09"></circle>
+    <circle cx="140" cy="140" r="130" stroke="#C8973A" stroke-width="0.5" opacity="0.07"></circle>
+    <circle cx="200" cy="40" r="3" fill="#C8973A" opacity="0.18"></circle>
+    <circle cx="80" cy="230" r="2" fill="#C8973A" opacity="0.15"></circle>
+    <circle cx="250" cy="170" r="2.5" fill="#C8973A" opacity="0.12"></circle>
+  </svg>
+
+  <div class="speaking-services-container">
+
+    <!-- Intro block -->
+    <header class="speaking-services-intro">
+      <div class="speaking-services-rule" aria-hidden="true"></div>
+      <p class="speaking-services-eyebrow">Speaking Formats</p>
+      <h2 class="speaking-services-heading">Bringing Science &amp; Story<br>to Every Stage</h2>
+      <p class="speaking-services-subtext">From intimate academic seminars to large public stages, Daria offers a range of speaking formats that bridge rigorous scientific thinking and the art of narrative. Each engagement is crafted to leave audiences with a new lens on the world.</p>
+    </header>
+
+    <!-- 2×2 Card Grid -->
+    <div class="speaking-services-grid">
+
+      <!-- Card 1: Keynote -->
+      <article class="speaking-services-card">
+        <div class="speaking-card-accent-bar" aria-hidden="true"></div>
+        <div class="speaking-card-inner">
+          <div class="speaking-card-icon-wrap">
+            <svg data-element-type="icon" data-icon-type="svg" width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M16 4L28 10V22L16 28L4 22V10L16 4Z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"></path>
+              <circle cx="16" cy="16" r="4" stroke="currentColor" stroke-width="1.2"></circle>
+              <path d="M16 4V12M16 20V28M4 10L12 14M20 18L28 22M28 10L20 14M12 18L4 22" stroke="currentColor" stroke-width="0.8" opacity="0.5"></path>
+            </svg>
+          </div>
+          <div class="speaking-card-content">
+            <span class="speaking-card-tag">Keynote Talk</span>
+            <h3 class="speaking-card-title">The Physics of Wonder</h3>
+            <p class="speaking-card-desc">A signature keynote that weaves quantum mechanics, cosmology, and the human impulse to tell stories into a single cohesive arc. Designed for conferences, festivals, and institutional events where ideas must resonate far beyond the room.</p>
+            <ul class="speaking-card-meta">
+              <li><span class="meta-label">Duration</span><span class="meta-val">45 – 75 min</span></li>
+              <li><span class="meta-label">Audience</span><span class="meta-val">General public &amp; professionals</span></li>
+            </ul>
+          </div>
+        </div>
+      </article>
+
+      <!-- Card 2: Academic-Public Crossover -->
+      <article class="speaking-services-card">
+        <div class="speaking-card-accent-bar" aria-hidden="true"></div>
+        <div class="speaking-card-inner">
+          <div class="speaking-card-icon-wrap">
+            <svg data-element-type="icon" data-icon-type="svg" width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <rect x="4" y="8" width="24" height="16" rx="1" stroke="currentColor" stroke-width="1.2"></rect>
+              <path d="M4 14H28M10 8V24M22 8V24" stroke="currentColor" stroke-width="0.9" opacity="0.6"></path>
+              <circle cx="16" cy="16" r="3" stroke="currentColor" stroke-width="1.2"></circle>
+            </svg>
+          </div>
+          <div class="speaking-card-content">
+            <span class="speaking-card-tag">Academic–Public Crossover</span>
+            <h3 class="speaking-card-title">Lecture Series</h3>
+            <p class="speaking-card-desc">Structured lectures designed to sit at the intersection of peer-level scientific discourse and public accessibility. Ideal for universities, research institutions, and cultural organisations seeking depth without sacrificing clarity.</p>
+            <ul class="speaking-card-meta">
+              <li><span class="meta-label">Duration</span><span class="meta-val">60 – 90 min + Q&amp;A</span></li>
+              <li><span class="meta-label">Audience</span><span class="meta-val">Academic &amp; curious public</span></li>
+            </ul>
+          </div>
+        </div>
+      </article>
+
+      <!-- Card 3: Moderated Conversation -->
+      <article class="speaking-services-card">
+        <div class="speaking-card-accent-bar" aria-hidden="true"></div>
+        <div class="speaking-card-inner">
+          <div class="speaking-card-icon-wrap">
+            <svg data-element-type="icon" data-icon-type="svg" width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M6 8C6 6.9 6.9 6 8 6H18C19.1 6 20 6.9 20 8V16C20 17.1 19.1 18 18 18H12L8 22V18H8C6.9 18 6 17.1 6 16V8Z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"></path>
+              <path d="M20 12H24C25.1 12 26 12.9 26 14V20C26 21.1 25.1 22 24 22H24V25L21 22H16C14.9 22 14 21.1 14 20V18" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"></path>
+            </svg>
+          </div>
+          <div class="speaking-card-content">
+            <span class="speaking-card-tag">Moderated Conversation</span>
+            <h3 class="speaking-card-title">In Dialogue</h3>
+            <p class="speaking-card-desc">An intimate, live conversation format where Daria joins a moderator or fellow thinker to explore the edges of science, creativity, and meaning-making. Suited for literary festivals, podcasts recorded live, and curated salon evenings.</p>
+            <ul class="speaking-card-meta">
+              <li><span class="meta-label">Duration</span><span class="meta-val">40 – 60 min</span></li>
+              <li><span class="meta-label">Audience</span><span class="meta-val">Intimate &amp; festival formats</span></li>
+            </ul>
+          </div>
+        </div>
+      </article>
+
+      <!-- Card 4: Workshop -->
+      <article class="speaking-services-card">
+        <div class="speaking-card-accent-bar" aria-hidden="true"></div>
+        <div class="speaking-card-inner">
+          <div class="speaking-card-icon-wrap">
+            <svg data-element-type="icon" data-icon-type="svg" width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M8 6H24V10L18 14V26H14V14L8 10V6Z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"></path>
+              <path d="M6 6H26" stroke="currentColor" stroke-width="1.2"></path>
+              <path d="M14 19H18M14 22H18" stroke="currentColor" stroke-width="0.9" opacity="0.6"></path>
+            </svg>
+          </div>
+          <div class="speaking-card-content">
+            <span class="speaking-card-tag">Workshop</span>
+            <h3 class="speaking-card-title">Storytelling in Science</h3>
+            <p class="speaking-card-desc">A hands-on workshop for researchers, science communicators, and educators exploring how narrative structure, character, and metaphor can transform complex scientific ideas into compelling public communication — without sacrificing accuracy.</p>
+            <ul class="speaking-card-meta">
+              <li><span class="meta-label">Duration</span><span class="meta-val">Half or full day</span></li>
+              <li><span class="meta-label">Audience</span><span class="meta-val">Researchers &amp; educators</span></li>
+            </ul>
+          </div>
+        </div>
+      </article>
+
+    </div>
+    <!-- /grid -->
+
+    <!-- CTA -->
+    <div class="speaking-services-cta">
+      <a href="/contact" class="speaking-cta-btn">Enquire About a Speaking Engagement</a>
+    </div>
+
+  </div>
+</section>
+
+<section class="speaking-topics-section" data-layout-spec="Speaking-topics">
+  <!-- Decorative celestial orbit rings -->
+  <svg class="speaking-topics-decor-orbits" data-no-icon-edit="true" aria-hidden="true" viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="150" cy="150" r="60" stroke="rgba(200,151,58,0.12)" stroke-width="1"></circle>
+    <circle cx="150" cy="150" r="100" stroke="rgba(200,151,58,0.09)" stroke-width="1"></circle>
+    <circle cx="150" cy="150" r="140" stroke="rgba(200,151,58,0.06)" stroke-width="1"></circle>
+    <circle cx="210" cy="90" r="3" fill="rgba(200,151,58,0.25)"></circle>
+    <circle cx="50" cy="185" r="2" fill="rgba(200,151,58,0.18)"></circle>
+    <circle cx="255" cy="195" r="2.5" fill="rgba(200,151,58,0.15)"></circle>
+  </svg>
+
+  <div class="speaking-topics-container">
+
+    <!-- Section Header -->
+    <header class="speaking-topics-header">
+      <div class="speaking-topics-amber-rule"></div>
+      <p class="speaking-topics-eyebrow">Signature Topics</p>
+      <h2 class="speaking-topics-title">What Daria Speaks About</h2>
+      <p class="speaking-topics-subtitle">Each lecture is a journey through ideas — from the equations that govern galaxies to the sentences that move hearts. These are the themes that define her work on stage, on the page, and in the air.</p>
+    </header>
+
+    <!-- Topics List -->
+    <ol class="speaking-topics-list">
+
+      <!-- Topic 01 -->
+      <li class="speaking-topics-item">
+        <div class="speaking-topics-row">
+          <div class="speaking-topics-meta">
+            <span class="speaking-topics-numeral">01</span>
+          </div>
+          <div class="speaking-topics-content">
+            <h3 class="speaking-topics-name">The Poetry of Physics</h3>
+            <p class="speaking-topics-desc">What happens when a physicist reads a poem — and a poet reads an equation? This lecture explores the unexpected kinship between scientific language and literary form: the rhythm of a formula, the metaphor hidden in a theorem, the beauty of describing the universe in the fewest possible words. Daria draws on her dual life as a physicist and author to reveal that precision and poetry are not opposites — they are collaborators.</p>
+            <span class="speaking-topics-tag">Science &amp; Language</span>
+          </div>
+        </div>
+        <div class="speaking-topics-divider"></div>
+      </li>
+
+      <!-- Topic 02 -->
+      <li class="speaking-topics-item">
+        <div class="speaking-topics-row speaking-topics-row--alt">
+          <div class="speaking-topics-content">
+            <h3 class="speaking-topics-name">Storytelling and Truth</h3>
+            <p class="speaking-topics-desc">Science advances through evidence; literature advances through empathy. But both are, at their core, acts of storytelling. This talk examines how narrative structure shapes the way we understand facts, how stories can illuminate or distort reality, and why the craft of telling a true story is one of the most demanding — and important — skills of our time. A meditation on honesty, imagination, and the ethics of explanation.</p>
+            <span class="speaking-topics-tag">Narrative &amp; Epistemology</span>
+          </div>
+          <div class="speaking-topics-meta speaking-topics-meta--end">
+            <span class="speaking-topics-numeral">02</span>
+          </div>
+        </div>
+        <div class="speaking-topics-divider"></div>
+      </li>
+
+      <!-- Topic 03 -->
+      <li class="speaking-topics-item">
+        <div class="speaking-topics-row">
+          <div class="speaking-topics-meta">
+            <span class="speaking-topics-numeral">03</span>
+          </div>
+          <div class="speaking-topics-content">
+            <h3 class="speaking-topics-name">Science in Public Culture</h3>
+            <p class="speaking-topics-desc">At a moment when scientific consensus is contested in public squares and social feeds, how does science communicate itself to the world? Daria examines the gap between the laboratory and the living room — how institutions, media, and individual scientists shape (and misshape) public understanding. Drawing on her experience as a podcast host and public intellectual, she offers a frank, nuanced account of what it means to be a scientist in the age of viral misinformation.</p>
+            <span class="speaking-topics-tag">Public Discourse</span>
+          </div>
+        </div>
+        <div class="speaking-topics-divider"></div>
+      </li>
+
+      <!-- Topic 04 -->
+      <li class="speaking-topics-item">
+        <div class="speaking-topics-row speaking-topics-row--alt">
+          <div class="speaking-topics-content">
+            <h3 class="speaking-topics-name">Curiosity as a Civic Practice</h3>
+            <p class="speaking-topics-desc">Curiosity is not merely a personality trait — it is a democratic virtue. This lecture makes the case that asking questions, tolerating uncertainty, and remaining genuinely open to being wrong are not just scientific habits but essential civic ones. Daria argues that the disposition of the scientist — humble, rigorous, endlessly curious — is exactly what public life needs more of, and explores how we might cultivate it across education, media, and community.</p>
+            <span class="speaking-topics-tag">Education &amp; Democracy</span>
+          </div>
+          <div class="speaking-topics-meta speaking-topics-meta--end">
+            <span class="speaking-topics-numeral">04</span>
+          </div>
+        </div>
+        <div class="speaking-topics-divider"></div>
+      </li>
+
+      <!-- Topic 05 -->
+      <li class="speaking-topics-item">
+        <div class="speaking-topics-row">
+          <div class="speaking-topics-meta">
+            <span class="speaking-topics-numeral">05</span>
+          </div>
+          <div class="speaking-topics-content">
+            <h3 class="speaking-topics-name">The Craft of Explaining the Invisible</h3>
+            <p class="speaking-topics-desc">Dark matter. Quantum entanglement. The structure of spacetime. How do you explain something that cannot be seen, touched, or directly experienced? This masterclass in scientific communication unpacks the tools — analogy, rhythm, image, silence — that make the abstract tangible. Whether you are a researcher, a teacher, a journalist, or simply someone who has ever struggled to explain a complex idea, this talk offers a practical and philosophical guide to making the invisible felt.</p>
+            <span class="speaking-topics-tag">Science Communication</span>
+          </div>
+        </div>
+        <div class="speaking-topics-divider speaking-topics-divider--last"></div>
+      </li>
+
+    </ol>
+
+    <!-- CTA -->
+    <div class="speaking-topics-cta">
+      <p class="speaking-topics-cta-text">Interested in booking Daria for your event, institution, or conference?</p>
+      <a href="/contact" class="speaking-topics-btn">Invite Daria to Speak</a>
+    </div>
+
+  </div>
+</section>
+
+<section class="speaking-proof-section" data-layout-spec="Speaking-proof">
+
+  <!-- Celestial orbit rings decoration -->
+  <svg class="speaking-proof-celestial" aria-hidden="true" data-no-icon-edit="true" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="200" cy="200" r="80" stroke="rgba(200,151,58,0.1)" stroke-width="1"></circle>
+    <circle cx="200" cy="200" r="130" stroke="rgba(200,151,58,0.08)" stroke-width="1"></circle>
+    <circle cx="200" cy="200" r="180" stroke="rgba(200,151,58,0.06)" stroke-width="1"></circle>
+    <circle cx="280" cy="200" r="4" fill="rgba(200,151,58,0.2)"></circle>
+    <circle cx="70" cy="200" r="3" fill="rgba(200,151,58,0.15)"></circle>
+    <circle cx="200" cy="70" r="3" fill="rgba(200,151,58,0.15)"></circle>
+  </svg>
+
+  <div class="speaking-proof-container">
+
+    <!-- Section header -->
+    <header class="speaking-proof-header">
+      <div class="speaking-proof-amber-rule" aria-hidden="true"></div>
+      <p class="speaking-proof-label">Why Organizers Invite Daria</p>
+      <h2 class="speaking-proof-title">Evidence, Not Promises</h2>
+    </header>
+
+    <!-- Three-column evidence band -->
+    <div class="speaking-proof-columns">
+
+      <!-- Column 1: Audience Fit -->
+      <article class="speaking-proof-col">
+        <div class="speaking-proof-col-top">
+          <span class="speaking-proof-col-number">01</span>
+          <div class="speaking-proof-col-amber-sep" aria-hidden="true"></div>
+          <h3 class="speaking-proof-col-title">Audience Fit</h3>
+        </div>
+        <p class="speaking-proof-col-body">Daria speaks fluently across academic conferences, cultural festivals, corporate innovation days, and public science events. Her rare combination of a physics PhD and literary voice means she calibrates depth and accessibility on the fly — from CERN researchers to curious general audiences.</p>
+        <ul class="speaking-proof-bullets">
+          <li><span class="speaking-proof-bullet-dot" aria-hidden="true"></span>University lecture halls</li>
+          <li><span class="speaking-proof-bullet-dot" aria-hidden="true"></span>Literary &amp; ideas festivals</li>
+          <li><span class="speaking-proof-bullet-dot" aria-hidden="true"></span>Corporate innovation summits</li>
+          <li><span class="speaking-proof-bullet-dot" aria-hidden="true"></span>Interdisciplinary symposia</li>
+        </ul>
+      </article>
+
+      <!-- Column 2: Event Impact -->
+      <article class="speaking-proof-col speaking-proof-col--accent">
+        <div class="speaking-proof-col-top">
+          <span class="speaking-proof-col-number">02</span>
+          <div class="speaking-proof-col-amber-sep" aria-hidden="true"></div>
+          <h3 class="speaking-proof-col-title">Event Impact</h3>
+        </div>
+        <p class="speaking-proof-col-body">Talks that open minds and spark conversation long after the applause ends. Daria's sessions are designed to be the intellectual highlight of any program — combining rigorous scientific thinking with narrative tension that makes complex ideas feel urgent, personal, and unforgettable.</p>
+        <ul class="speaking-proof-bullets">
+          <li><span class="speaking-proof-bullet-dot" aria-hidden="true"></span>Memorable keynote moments</li>
+          <li><span class="speaking-proof-bullet-dot" aria-hidden="true"></span>Post-event media coverage</li>
+          <li><span class="speaking-proof-bullet-dot" aria-hidden="true"></span>Repeat invitations from organizers</li>
+          <li><span class="speaking-proof-bullet-dot" aria-hidden="true"></span>Audience Q&amp;A that runs long</li>
+        </ul>
+      </article>
+
+      <!-- Column 3: Collaboration Style -->
+      <article class="speaking-proof-col">
+        <div class="speaking-proof-col-top">
+          <span class="speaking-proof-col-number">03</span>
+          <div class="speaking-proof-col-amber-sep" aria-hidden="true"></div>
+          <h3 class="speaking-proof-col-title">Collaboration Style</h3>
+        </div>
+        <p class="speaking-proof-col-body">Organizers describe working with Daria as effortless. She arrives prepared, adapts her material to your event's theme, and engages with your team before and after the stage. No diva dynamics — just intellectual generosity and professional clarity from first contact to final bow.</p>
+        <ul class="speaking-proof-bullets">
+          <li><span class="speaking-proof-bullet-dot" aria-hidden="true"></span>Responsive &amp; brief-ready</li>
+          <li><span class="speaking-proof-bullet-dot" aria-hidden="true"></span>Custom talk development</li>
+          <li><span class="speaking-proof-bullet-dot" aria-hidden="true"></span>Panel moderation available</li>
+          <li><span class="speaking-proof-bullet-dot" aria-hidden="true"></span>Workshop formats on request</li>
+        </ul>
+      </article>
+
+    </div>
+
+    <!-- Credential strip -->
+    <div class="speaking-proof-credentials">
+      <div class="speaking-proof-cred-item">
+        <span class="speaking-proof-cred-value">PhD</span>
+        <span class="speaking-proof-cred-label">Theoretical Physics</span>
+      </div>
+      <div class="speaking-proof-cred-divider" aria-hidden="true"></div>
+      <div class="speaking-proof-cred-item">
+        <span class="speaking-proof-cred-value">3×</span>
+        <span class="speaking-proof-cred-label">Published Author</span>
+      </div>
+      <div class="speaking-proof-cred-divider" aria-hidden="true"></div>
+      <div class="speaking-proof-cred-item">
+        <span class="speaking-proof-cred-value">50+</span>
+        <span class="speaking-proof-cred-label">Speaking Engagements</span>
+      </div>
+      <div class="speaking-proof-cred-divider" aria-hidden="true"></div>
+      <div class="speaking-proof-cred-item">
+        <span class="speaking-proof-cred-value">Podcast</span>
+        <span class="speaking-proof-cred-label">Host &amp; Producer</span>
+      </div>
+    </div>
+
+    <!-- CTA area aligned to start -->
+    <div class="speaking-proof-cta-area">
+      <p class="speaking-proof-cta-text">Ready to bring intellectual depth and genuine storytelling to your next event?</p>
+      <a href="/contact" class="speaking-proof-cta-btn">
+        <span>Invite Daria to Speak</span>
+        <svg data-element-type="icon" data-icon-type="svg" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+      </a>
+      <a href="/contact" class="speaking-proof-ghost-btn">View availability</a>
+    </div>
+
+  </div>
+</section>
+  </main>
+  
+  <footer class="site-footer"><div class="footer-inner"><div class="footer-top"><div class="footer-col footer-col--brand"><div class="footer-logo-wrap"><img src="/assets/daria-logo.webp" alt="Daria" class="logo" /></div><p class="footer-tagline">Where physics, literature, and storytelling converge — a premium intellectual world built for curious minds.</p><div class="footer-social"></div></div><div class="footer-col footer-col--links"><h4 class="footer-heading">Navigation</h4><ul class="footer-nav"><li><a href="/">Home</a></li><li><a href="/about">About</a></li><li><a href="/books-writing">Books &amp; Writing</a></li><li><a href="/speaking">Speaking</a></li><li><a href="/podcast">Podcast</a></li><li><a href="/contact">Contact</a></li></ul></div><div class="footer-col footer-col--contact"><h4 class="footer-heading">Contact</h4><ul class="footer-contact"><li><span class="contact-icon"><i class="fas fa-envelope"></i></span><span class="contact-text"><a href="mailto:[business_email]">[business_email]</a></span></li><li><span class="contact-icon"><i class="fas fa-phone"></i></span><span class="contact-text"><a href="tel:[business_phone]">[business_phone]</a></span></li><li><a href="/"><span class="contact-icon"><i class="fas fa-map-marker-alt"></i></span><span class="contact-text">[business_address]</span></a></li></ul></div><div class="footer-col footer-col--extra"><h4 class="footer-heading">Explore</h4><p class="footer-extra-text">Dive into a world where science meets storytelling. Join the community of lifelong learners.</p><div class="footer-accent-line"></div><p class="footer-extra-label">חינוך · מדע · תוכן דיגיטלי</p></div></div><div class="footer-bottom"><div class="footer-bottom-left"><span class="footer-copyright">© 2026 Daria. All rights reserved.</span></div><div class="footer-bottom-right"><nav class="footer-legal"><a href="/privacy">Privacy Policy</a><span class="footer-sep">·</span><a href="/terms">Terms &amp; Conditions</a><span class="footer-sep">·</span><a href="/accessibility">Accessibility</a></nav><a href="https://zappy5.com" target="_blank" class="zappy-attribution">Generated by Zappy</a></div></div></div><div class="footer-waveform" aria-hidden="true"><svg viewBox="0 0 1200 60" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg"><polyline points="0,40 30,28 60,38 90,20 120,35 150,15 180,32 210,22 240,38 270,18 300,34 330,24 360,40 390,16 420,30 450,20 480,36 510,14 540,32 570,22 600,38 630,18 660,34 690,24 720,40 750,16 780,30 810,20 840,36 870,14 900,32 930,22 960,38 990,18 1020,34 1050,24 1080,40 1110,16 1140,30 1170,20 1200,36" fill="none" stroke="rgba(243,169,59,0.18)" stroke-width="1.5"></polyline><polyline points="0,50 40,38 80,48 120,30 160,45 200,25 240,42 280,32 320,50 360,26 400,44 440,34 480,50 520,24 560,42 600,30 640,48 680,26 720,44 760,34 800,50 840,24 880,42 920,30 960,48 1000,26 1040,44 1080,34 1120,50 1160,24 1200,42" fill="none" stroke="rgba(123,63,228,0.12)" stroke-width="1"></polyline></svg></div></footer>
+  
+  
+  
+  <div data-integration="accessibility:toolbar"></div>
+
+    <script src="/script.js"></script>
+
+    <script id="zappy-mobile-submenu-script">
+    (function() {
+      function initMobileSubmenuToggles() {
+        if (window.innerWidth > 768) {
+          document.querySelectorAll('.mobile-submenu-toggle').forEach(function(btn) { btn.remove(); });
+          document.querySelectorAll('.sub-menu.mobile-expanded').forEach(function(menu) { menu.classList.remove('mobile-expanded'); });
+          return;
+        }
+        var items = document.querySelectorAll('.nav-menu li:has(.sub-menu), nav li:has(.sub-menu), .navbar li:has(.sub-menu), #navMenu li:has(.sub-menu)');
+        items.forEach(function(li) {
+          if (li.querySelector('.mobile-submenu-toggle')) return;
+          var submenu = li.querySelector('.sub-menu');
+          var parentLink = li.querySelector(':scope > a');
+          if (!submenu || !parentLink) return;
+          var toggleBtn = document.createElement('button');
+          toggleBtn.className = 'mobile-submenu-toggle';
+          toggleBtn.setAttribute('aria-label', 'Toggle submenu');
+          toggleBtn.setAttribute('type', 'button');
+          parentLink.insertAdjacentElement('afterend', toggleBtn);
+          toggleBtn.addEventListener('click', function(e) {
+            e.preventDefault(); e.stopPropagation();
+            document.querySelectorAll('.sub-menu.mobile-expanded').forEach(function(menu) {
+              if (menu !== submenu) { menu.classList.remove('mobile-expanded'); var t = menu.parentElement.querySelector('.mobile-submenu-toggle'); if(t) t.classList.remove('expanded'); }
+            });
+            submenu.classList.toggle('mobile-expanded');
+            toggleBtn.classList.toggle('expanded');
+          });
+        });
+      }
+      if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', initMobileSubmenuToggles); }
+      else { initMobileSubmenuToggles(); }
+      var resizeTimer; window.addEventListener('resize', function() { clearTimeout(resizeTimer); resizeTimer = setTimeout(initMobileSubmenuToggles, 250); });
+      // Re-initialize when mobile menu becomes visible (MutationObserver)
+      var observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+          if (mutation.type === 'attributes') {
+            var target = mutation.target;
+            if (target.classList && (target.classList.contains('active') || target.classList.contains('open'))) {
+              setTimeout(initMobileSubmenuToggles, 100);
+            }
+          }
+        });
+      });
+      setTimeout(function() {
+        document.querySelectorAll('.mobile-menu, .nav-menu, #navMenu, nav').forEach(function(menu) {
+          observer.observe(menu, { attributes: true, attributeFilter: ['class', 'style'] });
+        });
+      }, 500);
+    })();
+    </script>
+
+    <script id="zappy-navbar-scroll-effect">
+    (function(){
+      var nb=document.querySelector('nav.navbar,.navbar:not(.zappy-catalog-menu)');
+      var cm=document.querySelector('.zappy-catalog-menu,#zappy-catalog-menu');
+      if(!nb)return;
+      var fb='rgba(231,221,210,0.85)';
+      var th=60;
+      var rs=getComputedStyle(document.documentElement);
+      var td=rs.getPropertyValue('--text-dark').trim()||'#1a1a1a';
+      var tl=rs.getPropertyValue('--text-light').trim()||'#ffffff';
+      var st=true?td:tl;
+      nb.style.transition='background 0.3s ease,backdrop-filter 0.3s ease,-webkit-backdrop-filter 0.3s ease,box-shadow 0.3s ease';
+      if(cm)cm.style.transition='background 0.3s ease,backdrop-filter 0.3s ease,-webkit-backdrop-filter 0.3s ease';
+      var neSel='a,.navbar-brand,.navbar-brand a,.dropdown-toggle,.mobile-toggle,.phone-header-btn,.mobile-hamburger-btn,.mobile-close-btn,.mobile-submenu-toggle,.nav-link';
+      var skipCls=['cart-link','login-link','nav-search-toggle','search-toggle'];
+      function sTC(c,clr){var els=c.querySelectorAll(neSel);for(var i=0;i<els.length;i++){var sk=false;if(els[i].closest('.sub-menu')||els[i].closest('.dropdown-menu')){sk=true;}for(var j=0;j<skipCls.length;j++){if(els[i].classList.contains(skipCls[j])){sk=true;break;}}if(!sk)els[i].style.setProperty('color',clr,'important');}}
+      function cTC(c){var els=c.querySelectorAll(neSel);for(var i=0;i<els.length;i++){if(els[i].closest('.sub-menu')||els[i].closest('.dropdown-menu'))continue;els[i].style.removeProperty('color');}}
+      function applyScrolled(){
+        nb.classList.add('scrolled');
+        if(window.innerWidth>768){
+          nb.style.setProperty('--frosted-text',st);
+          nb.style.setProperty('background-image','none','important');
+          nb.style.setProperty('background-color',fb,'important');
+          nb.style.backdropFilter='blur(12px)';nb.style.webkitBackdropFilter='blur(12px)';nb.style.boxShadow='0 2px 16px rgba(0,0,0,0.12)';
+          sTC(nb,st);
+        }
+        if(cm){cm.classList.add('scrolled');if(window.innerWidth>768){cm.style.setProperty('background',fb,'important');cm.style.setProperty('backdrop-filter','blur(12px)','important');cm.style.setProperty('-webkit-backdrop-filter','blur(12px)','important');sTC(cm,st);}}
+      }
+      function onS(){
+        if(window._zappyNavNoDarkHero) return;
+        if(window.innerWidth<=768){nb.classList.remove('scrolled');cTC(nb);if(cm){cm.classList.remove('scrolled');cTC(cm);}return;}
+        var y=window.scrollY||window.pageYOffset;
+        if(y>th){
+          nb.classList.add('scrolled');nb.style.setProperty('background-color',fb,'important');nb.style.setProperty('background-image','none','important');
+          nb.style.setProperty('--frosted-text',st);nb.style.backdropFilter='blur(12px)';nb.style.webkitBackdropFilter='blur(12px)';nb.style.boxShadow='0 2px 16px rgba(0,0,0,0.12)';
+          sTC(nb,st);
+          if(cm){cm.classList.add('scrolled');cm.style.setProperty('background',fb,'important');cm.style.setProperty('backdrop-filter','blur(12px)','important');cm.style.setProperty('-webkit-backdrop-filter','blur(12px)','important');sTC(cm,st);}
+        }else{
+          nb.classList.remove('scrolled');nb.style.setProperty('background-color','transparent','important');nb.style.removeProperty('background-image');
+          nb.style.removeProperty('--frosted-text');nb.style.backdropFilter='none';nb.style.webkitBackdropFilter='none';nb.style.boxShadow='none';
+          cTC(nb);
+          if(cm){cm.classList.remove('scrolled');cm.style.setProperty('background','transparent','important');cm.style.setProperty('backdrop-filter','none','important');cm.style.setProperty('-webkit-backdrop-filter','none','important');cTC(cm);}
+        }
+      }
+      function sLum(rv,gv,bv){rv/=255;gv/=255;bv/=255;rv=rv<=0.03928?rv/12.92:Math.pow((rv+0.055)/1.055,2.4);gv=gv<=0.03928?gv/12.92:Math.pow((gv+0.055)/1.055,2.4);bv=bv<=0.03928?bv/12.92:Math.pow((bv+0.055)/1.055,2.4);return 0.2126*rv+0.7152*gv+0.0722*bv;}
+      window.addEventListener('scroll',onS,{passive:true});
+      window.addEventListener('resize',onS,{passive:true});
+      onS();
+      var heroEl=document.querySelector('section[class*="hero"],[data-hero-type],main>section:first-child');
+      var hasDH=false;
+      if(heroEl){var hCs=getComputedStyle(heroEl);var hBI=hCs.backgroundImage;if(hBI&&hBI!=='none'){if(hBI.indexOf('url(')!==-1){var hM2=hCs.backgroundColor.match(/\d+/g);if(hM2&&hM2.length>=3){hasDH=sLum(parseInt(hM2[0]),parseInt(hM2[1]),parseInt(hM2[2]))<0.4;}else{hasDH=true;}}else if(hBI.indexOf('gradient')!==-1){var cM=hBI.match(/rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/g);if(cM&&cM.length>0){var tLm=0;for(var ci=0;ci<cM.length;ci++){var pts=cM[ci].match(/\d+/g);tLm+=sLum(parseInt(pts[0]),parseInt(pts[1]),parseInt(pts[2]));}hasDH=(tLm/cM.length)<0.4;}else{hasDH=true;}}else{hasDH=true;}}else{var hM=hCs.backgroundColor.match(/\d+/g);if(hM&&hM.length>=3){hasDH=sLum(parseInt(hM[0]),parseInt(hM[1]),parseInt(hM[2]))<0.4;}}}
+      if(!hasDH){window.removeEventListener('scroll',onS);window.removeEventListener('resize',onS);applyScrolled();window._zappyNavNoDarkHero=true;}
+    })();
+    </script>
+</body>
+</html>

@@ -1,0 +1,1445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="index, follow">
+    <title>Science Meets Story — Daria</title>
+    <meta name="description" content="Daria is a PhD physicist, author, and podcast host who transforms complex science into captivating stories. Explore books, talks, and episodes that make ideas unforgettable.">
+    <meta name="keywords" content="daria paramount plus, paramount plus daria, science storytelling, intellectual thought leader">
+    
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="48x48" href="/assets/favicon-48x48.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/assets/favicon-512x512.png">
+    <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+    <!-- Zappy Analytics -->
+<script>
+(function() {
+  'use strict';
+  
+  // Configuration
+  var config = {
+    websiteId: '939f442d-05e8-47ca-9396-41f999469bd4',
+    apiUrl: 'https://api.zappy5.com/api/analytics/track',
+    sessionDuration: 30 * 60 * 1000, // 30 minutes
+    visitorDuration: 30 * 24 * 60 * 60 * 1000, // 30 days
+    trackPageViews: true,
+    trackClicks: true,
+    trackFormSubmissions: true
+  };
+  
+  // Generate or retrieve persistent visitor ID (30 days)
+  function getVisitorId() {
+    var visitorKey = 'zappy_visitor_' + config.websiteId;
+    var visitor = null;
+    
+    try {
+      visitor = localStorage.getItem(visitorKey);
+      if (visitor) {
+        var visitorData = JSON.parse(visitor);
+        var now = Date.now();
+        
+        // Check if visitor ID is still valid (30 days)
+        if (now - visitorData.created < config.visitorDuration) {
+          // Update last seen timestamp
+          visitorData.lastSeen = now;
+          localStorage.setItem(visitorKey, JSON.stringify(visitorData));
+          return visitorData.id;
+        }
+      }
+    } catch (e) {
+      console.warn('Zappy Analytics: LocalStorage not available');
+    }
+    
+    // Generate new visitor ID
+    var newVisitorId = 'zv_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    
+    try {
+      localStorage.setItem(visitorKey, JSON.stringify({
+        id: newVisitorId,
+        created: Date.now(),
+        lastSeen: Date.now()
+      }));
+    } catch (e) {
+      // Continue without local storage
+    }
+    
+    return newVisitorId;
+  }
+  
+  // Generate or retrieve session ID (30 minutes)
+  function getSessionId() {
+    var sessionKey = 'zappy_session_' + config.websiteId;
+    var session = null;
+    
+    try {
+      session = sessionStorage.getItem(sessionKey);
+      if (session) {
+        var sessionData = JSON.parse(session);
+        var now = Date.now();
+        
+        // Check if session is still valid
+        if (now - sessionData.timestamp < config.sessionDuration) {
+          // Update timestamp
+          sessionData.timestamp = now;
+          sessionStorage.setItem(sessionKey, JSON.stringify(sessionData));
+          return sessionData.id;
+        }
+      }
+    } catch (e) {
+      console.warn('Zappy Analytics: SessionStorage not available');
+    }
+    
+    // Generate new session ID
+    var newSessionId = 'zs_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    
+    try {
+      sessionStorage.setItem(sessionKey, JSON.stringify({
+        id: newSessionId,
+        timestamp: Date.now()
+      }));
+    } catch (e) {
+      // Continue without session storage
+    }
+    
+    return newSessionId;
+  }
+  
+  var visitorId = getVisitorId();
+  var sessionId = getSessionId();
+  
+  // Track an event
+  function trackEvent(eventType, data) {
+    data = data || {};
+    
+    var eventData = {
+      website_id: config.websiteId,
+      event_type: eventType,
+      page_path: window.location.pathname,
+      referrer: document.referrer || 'direct',
+      visitor_id: visitorId,
+      session_id: sessionId,
+      metadata: data
+    };
+    
+    // Use sendBeacon if available (better for page unload events)
+    if (navigator.sendBeacon) {
+      var blob = new Blob([JSON.stringify(eventData)], { type: 'application/json' });
+      navigator.sendBeacon(config.apiUrl, blob);
+    } else {
+      // Fallback to fetch
+      fetch(config.apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(eventData),
+        keepalive: true
+      }).catch(function(error) {
+        console.warn('Zappy Analytics: Failed to track event', error);
+      });
+    }
+  }
+  
+  // Track page view
+  if (config.trackPageViews) {
+    trackEvent('pageview', {
+      title: document.title,
+      url: window.location.href
+    });
+  }
+  
+  // Track clicks on important elements
+  if (config.trackClicks) {
+    document.addEventListener('click', function(e) {
+      var target = e.target;
+      
+      // Track button clicks (counted as actions)
+      if (target.tagName === 'BUTTON' || target.closest('button')) {
+        var button = target.tagName === 'BUTTON' ? target : target.closest('button');
+        trackEvent('click', {
+          element: 'button',
+          text: button.textContent.trim().substring(0, 100),
+          id: button.id || null,
+          class: button.className || null
+        });
+      }
+      
+      // Track link clicks (navigation - not counted as actions)
+      else if (target.tagName === 'A' || target.closest('a')) {
+        var link = target.tagName === 'A' ? target : target.closest('a');
+        trackEvent('navigation', {
+          element: 'link',
+          text: link.textContent.trim().substring(0, 100),
+          href: link.href,
+          external: link.hostname !== window.location.hostname
+        });
+      }
+    }, true);
+  }
+  
+  // Track form submissions
+  if (config.trackFormSubmissions) {
+    document.addEventListener('submit', function(e) {
+      var form = e.target;
+      
+      trackEvent('form_submit', {
+        form_id: form.id || null,
+        form_name: form.name || null,
+        form_action: form.action || null,
+        form_method: form.method || 'GET'
+      });
+    }, true);
+  }
+  
+  // Track time on page (send on page unload)
+  var pageLoadTime = Date.now();
+  
+  window.addEventListener('beforeunload', function() {
+    var timeOnPage = Math.floor((Date.now() - pageLoadTime) / 1000); // in seconds
+    
+    trackEvent('page_unload', {
+      time_on_page: timeOnPage,
+      page_path: window.location.pathname
+    });
+  });
+  
+  // Expose tracking function globally for custom events
+  window.zappyAnalytics = {
+    track: trackEvent,
+    getVisitorId: function() { return visitorId; },
+    getSessionId: function() { return sessionId; }
+  };
+  
+})();
+</script>
+<!-- End Zappy Analytics -->
+    <meta property="og:title" content="Science Meets Story — Daria">
+    <meta property="og:description" content="Daria is a PhD physicist, author, and podcast host who transforms complex science into captivating stories. Explore books, talks, and episodes that make ideas unforgettable.">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Science Meets Story — Daria">
+    <meta name="twitter:description" content="Daria is a PhD physicist, author, and podcast host who transforms complex science into captivating stories. Explore books, talks, and episodes that make ideas unforgettable.">
+    <meta property="og:type" content="website">
+  <meta property="og:locale" content="en_US">
+  
+  
+  
+  
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+
+
+  
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="48x48" href="/assets/favicon-48x48.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/assets/favicon-512x512.png">
+    <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+    <!-- Cookie Consent -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vanilla-cookieconsent@3/dist/cookieconsent.css">
+    <script src="https://cdn.jsdelivr.net/npm/vanilla-cookieconsent@3/dist/cookieconsent.umd.js"></script>
+    <!-- Mickidum Accessibility Toolbar -->
+    <script src="https://cdn.jsdelivr.net/gh/mickidum/acc_toolbar/acctoolbar/acctoolbar.min.js"></script>
+    <link rel="stylesheet" href="/styles.css">
+
+    <style id="zappy-dropdown-submenu-styles">
+      /* ========== DESKTOP DROPDOWN SUBMENU STYLES ========== */
+      /* Base styles for dropdown submenus - parent must be positioned */
+      .nav-menu li:has(.sub-menu), nav li:has(.sub-menu), .navbar li:has(.sub-menu), #navMenu li:has(.sub-menu) { position: relative; }
+      /* Submenu base - hidden by default */
+      .nav-menu .sub-menu, nav .sub-menu, .navbar .sub-menu, #navMenu .sub-menu { display: block !important; position: absolute !important; top: 100%; left: 0; min-width: 220px; background: white; border-radius: 8px; box-shadow: 0 8px 25px rgba(0,0,0,0.15); padding: 8px 0; opacity: 0; visibility: hidden; transform: translateY(10px); transition: all 0.3s ease; z-index: 1000; list-style: none; pointer-events: none; }
+      /* CRITICAL: Desktop hover styles to show dropdown */
+      .nav-menu li:hover > .sub-menu, nav li:hover > .sub-menu, .navbar li:hover > .sub-menu, #navMenu li:hover > .sub-menu { opacity: 1 !important; visibility: visible !important; transform: translateY(0) !important; pointer-events: auto !important; }
+      /* Submenu item styling */
+      .sub-menu li { list-style: none; margin: 0; padding: 0; }
+      .sub-menu a { display: block !important; padding: 10px 16px !important; color: var(--text-dark, #333) !important; font-weight: 500; text-decoration: none; white-space: nowrap; transition: background-color 0.2s; }
+      .sub-menu .zappy-nav-child > a { padding-left: 28px !important; font-size: 0.9em !important; opacity: 0.85 !important; }
+      [dir="rtl"] .sub-menu .zappy-nav-child > a, html[lang="he"] .sub-menu .zappy-nav-child > a, html[lang="ar"] .sub-menu .zappy-nav-child > a { padding-left: 10px !important; padding-right: 28px !important; }
+      .sub-menu .zappy-nav-parent > a { font-weight: 600 !important; }
+      .sub-menu a:hover { background-color: #f5f5f5; }
+      /* RTL (Hebrew/Arabic) dropdown positioning */
+      [dir="rtl"] .nav-menu .sub-menu, [dir="rtl"] nav .sub-menu, [dir="rtl"] .navbar .sub-menu, html[lang="he"] .nav-menu .sub-menu, html[lang="he"] nav .sub-menu, html[lang="he"] .navbar .sub-menu, html[lang="ar"] .nav-menu .sub-menu, html[lang="ar"] nav .sub-menu, html[lang="ar"] .navbar .sub-menu { left: auto !important; right: 0 !important; }
+      /* Hide empty dropdown menus (exclude catalog sub-menus that use <a> children instead of <li>) */
+      .sub-menu:empty, .sub-menu:not(:has(li:not(.zappy-hidden-menu-item))):not(:has(> a)), .sub-menu:not(:has(li)):not(:has(> a)) { display: none !important; opacity: 0 !important; visibility: hidden !important; pointer-events: none !important; }
+      /* Desktop: show submenu on Menu Group hover */
+      li:has(.menu-group-title):hover > .sub-menu { opacity: 1 !important; visibility: visible !important; transform: translateY(0) !important; pointer-events: auto !important; }
+      /* Menu Group title styling */
+      .nav-menu > li > .menu-group-title, #navMenu > li > .menu-group-title { display: inline-block; padding: 0.5rem 1rem; cursor: default; user-select: none; }
+      
+      /* ========== MOBILE SUBMENU STYLES ========== */
+      @media (max-width: 768px) {
+        .nav-menu .sub-menu, nav .sub-menu, .navbar .sub-menu, #navMenu .sub-menu { position: static !important; transform: none !important; box-shadow: none !important; background: transparent !important; max-height: 0; overflow: hidden; opacity: 0; visibility: hidden; transition: max-height 0.3s ease, opacity 0.3s ease; padding: 0 !important; border-radius: 0 !important; }
+        .navbar .sub-menu.mobile-expanded, .nav-menu .sub-menu.mobile-expanded, #navMenu .sub-menu.mobile-expanded { max-height: none !important; overflow-y: visible !important; opacity: 1 !important; visibility: visible !important; padding: 8px 0 8px 16px !important; }
+        [dir="rtl"] .sub-menu.mobile-expanded, html[lang="he"] .sub-menu.mobile-expanded { padding: 8px 16px 8px 0 !important; }
+        /* Disable hover behavior on mobile */
+        .nav-menu li:hover > .sub-menu, nav li:hover > .sub-menu, .navbar li:hover > .sub-menu, #navMenu li:hover > .sub-menu { opacity: 0; visibility: hidden; pointer-events: none; }
+        .nav-menu li > .sub-menu.mobile-expanded, nav li > .sub-menu.mobile-expanded, .navbar li > .sub-menu.mobile-expanded, #navMenu li > .sub-menu.mobile-expanded { opacity: 1 !important; visibility: visible !important; pointer-events: auto !important; }
+        .nav-menu li:has(.sub-menu), nav li:has(.sub-menu), .navbar li:has(.sub-menu), #navMenu li:has(.sub-menu) { display: flex !important; flex-wrap: wrap !important; align-items: center !important; position: relative !important; min-height: 44px !important; }
+        .nav-menu li:has(.sub-menu) > a, nav li:has(.sub-menu) > a, .navbar li:has(.sub-menu) > a, #navMenu li:has(.sub-menu) > a { flex: 1 !important; min-width: 0 !important; }
+        .nav-menu li:has(.sub-menu) > .menu-group-title, nav li:has(.sub-menu) > .menu-group-title, .navbar li:has(.sub-menu) > .menu-group-title, #navMenu li:has(.sub-menu) > .menu-group-title { flex: 1 !important; min-width: 0 !important; padding: 0 !important; line-height: inherit !important; }
+        .nav-menu li:has(.sub-menu) > .sub-menu, nav li:has(.sub-menu) > .sub-menu, .navbar li:has(.sub-menu) > .sub-menu, #navMenu li:has(.sub-menu) > .sub-menu { flex-basis: 100% !important; width: 100% !important; }
+        .nav-menu li:has(.sub-menu) > a [class*="chevron"], .nav-menu li:has(.sub-menu) > a [class*="arrow"], .nav-menu li:has(.sub-menu) > a .fa-chevron-down, .nav-menu li:has(.sub-menu) > a .fa-angle-down, nav li:has(.sub-menu) > a [class*="chevron"], nav li:has(.sub-menu) > a [class*="arrow"], #navMenu li:has(.sub-menu) > a [class*="chevron"], #navMenu li:has(.sub-menu) > a [class*="arrow"] { display: none !important; visibility: hidden !important; }
+        .mobile-submenu-toggle { display: flex !important; align-items: center !important; justify-content: center !important; width: 44px !important; height: auto !important; background: transparent !important; border: none !important; cursor: pointer !important; color: var(--text-light) !important; position: static !important; flex-shrink: 0 !important; align-self: stretch !important; z-index: 2 !important; padding: 0 !important; margin: 0 !important; }
+        .mobile-submenu-toggle::after { content: '' !important; width: 0 !important; height: 0 !important; border-left: 6px solid transparent !important; border-right: 6px solid transparent !important; border-top: 7px solid currentColor !important; transition: transform 0.3s ease !important; }
+        .mobile-submenu-toggle.expanded::after { transform: rotate(180deg) !important; }
+        .sub-menu a { padding: 10px 0 !important; display: block !important; color: var(--text-light) !important; white-space: normal !important; }
+        .sub-menu .zappy-nav-child > a { padding-left: 28px !important; font-size: 0.9em !important; opacity: 0.85 !important; }
+        [dir="rtl"] .sub-menu .zappy-nav-child > a, html[lang="he"] .sub-menu .zappy-nav-child > a, html[lang="ar"] .sub-menu .zappy-nav-child > a { padding-left: 0 !important; padding-right: 28px !important; }
+        .sub-menu .zappy-nav-parent > a { font-weight: 600 !important; }
+        .nav-menu.active, #navMenu.active { max-width: 100vw !important; overflow-x: hidden !important; box-sizing: border-box !important; }
+        .navbar .sub-menu li a, nav.navbar .sub-menu li a, .zappy-products-dropdown .sub-menu a { color: var(--text-light) !important; }
+      }
+      @media (min-width: 769px) { .mobile-submenu-toggle { display: none !important; } }
+    </style>
+
+    <style id="zappy-widget-visibility">
+      html[dir="rtl"] .whatsapp-float { right: 20px !important; left: auto !important; }
+      html[dir="ltr"] .whatsapp-float, html:not([dir]) .whatsapp-float { left: 20px !important; right: auto !important; }
+      html[dir="rtl"] #mic-access-tool-general-button, html[dir="rtl"] .mic-access-tool-general-button,
+      html[dir="rtl"] #mic-init-access-tool .mic-access-tool-general-button,
+      html[dir="rtl"] #mic-init-access-tool #mic-access-tool-general-button,
+      html[dir="rtl"] ._access-icon { left: 20px !important; right: auto !important; }
+      html[dir="ltr"] #mic-access-tool-general-button, html[dir="ltr"] .mic-access-tool-general-button,
+      html[dir="ltr"] #mic-init-access-tool .mic-access-tool-general-button,
+      html[dir="ltr"] #mic-init-access-tool #mic-access-tool-general-button,
+      html[dir="ltr"] ._access-icon,
+      html:not([dir]) #mic-access-tool-general-button, html:not([dir]) .mic-access-tool-general-button,
+      html:not([dir]) #mic-init-access-tool .mic-access-tool-general-button,
+      html:not([dir]) #mic-init-access-tool #mic-access-tool-general-button,
+      html:not([dir]) ._access-icon { right: 20px !important; left: auto !important; }
+      @media (max-width: 768px) { .whatsapp-float { display: flex !important; } }
+      @media (min-width: 769px) { .whatsapp-float { display: flex !important; } }
+      @media (max-width: 768px) {
+        #mic-access-tool-general-button, .mic-access-tool-general-button,
+        #mic-init-access-tool .mic-access-tool-general-button, #mic-init-access-tool #mic-access-tool-general-button,
+        ._access-icon { display: flex !important; visibility: visible !important; opacity: 1 !important; pointer-events: auto !important; }
+        #mic-access-tool-box.opened-mic-access-tool, .mic-access-tool-box.opened-mic-access-tool,
+        #mic-init-access-tool #mic-access-tool-box.opened-mic-access-tool {
+          visibility: visible !important; opacity: 1 !important; pointer-events: auto !important;
+        }
+      }
+      @media (min-width: 769px) {
+        #mic-access-tool-general-button, .mic-access-tool-general-button,
+        #mic-init-access-tool .mic-access-tool-general-button, #mic-init-access-tool #mic-access-tool-general-button,
+        ._access-icon { display: flex !important; visibility: visible !important; opacity: 1 !important; pointer-events: auto !important; }
+        #mic-access-tool-box.opened-mic-access-tool, .mic-access-tool-box.opened-mic-access-tool,
+        #mic-init-access-tool #mic-access-tool-box.opened-mic-access-tool {
+          visibility: visible !important; opacity: 1 !important; pointer-events: auto !important;
+        }
+      }
+    </style>
+</head>
+<body>
+<nav class="navbar">
+  <button class="mobile-toggle" id="mobileToggle" aria-label="Menu">
+    <svg class="hamburger-icon" width="24" height="24" viewBox="0 0 24 24" fill="none">
+      <path d="M3 12h18M3 6h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+    </svg>
+    <svg class="close-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" style="display: none;">
+      <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+    </svg>
+  </button>
+
+  <button class="phone-header-btn" data-phone="[business_phone]" aria-label="Call">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+    </svg>
+  </button>
+
+  <div class="nav-container">
+    <div class="nav-brand">
+      <a href="/" class="logo-link"><img class="logo" src="/assets/site-home-image-1.webp" alt="Daria"></a>
+    </div>
+
+    <ul class="nav-menu" id="navMenu"><li><a href="/">Home</a></li><li><a href="/about">About</a></li><li><a href="/books-writing">Books &amp; Writing</a></li><li><a href="/speaking">Speaking</a></li><li><a href="/podcast">Podcast</a></li></ul>
+
+    <div class="nav-cta-container">
+      <a href="/contact" class="nav-cta-btn">Contact</a>
+    </div>
+  </div>
+</nav>
+<script>
+
+// Navbar Mobile Menu Toggle and Contrast Fix
+(function() {
+  // Use 'load' event instead of 'DOMContentLoaded' to ensure we run AFTER all other scripts
+  window.addEventListener('load', function() {
+    
+    // FIX MOBILE BUTTON CONTRAST
+    // Detect navbar background color and apply contrasting color to mobile buttons
+    const navbar = document.querySelector('.navbar, nav, header');
+    if (!navbar) {
+      console.log('[Navbar] Navbar element not found');
+      return;
+    }
+    
+    // DECLARE VARIABLES EARLY to avoid Temporal Dead Zone errors
+    // These are used in multiple places below
+    let mobileToggle = document.getElementById('mobileToggle') ||
+                       document.querySelector('.mobile-toggle') ||
+                       document.querySelector('.hamburger') ||
+                       document.querySelector('.hamburger-menu') ||
+                       document.querySelector('.menu-toggle') ||
+                       document.querySelector('.burger-menu') ||
+                       document.querySelector('[aria-label="Menu"]') ||
+                       document.querySelector('[aria-label="תפריט"]');
+    
+    const phoneBtn = document.querySelector('.phone-header-btn');
+    
+    const computedStyle = window.getComputedStyle(navbar);
+    let bgColor = computedStyle.backgroundColor;
+    
+    console.log('[Navbar] Initial navbar background:', bgColor);
+    
+    // Check if background is transparent or rgba with 0 alpha
+    const isTransparent = bgColor === 'transparent' || 
+                         bgColor === 'rgba(0, 0, 0, 0)' ||
+                         (bgColor.startsWith('rgba') && bgColor.includes(', 0)'));
+    
+    if (isTransparent) {
+      // Check for background-image or gradient
+      const bgImage = computedStyle.backgroundImage;
+      if (bgImage && bgImage !== 'none') {
+        console.log('[Navbar] Navbar has background image/gradient, using dark text');
+        bgColor = 'rgb(240, 240, 240)'; // Assume light background
+      } else {
+        // Transparent navbar - check body background
+        const bodyBg = window.getComputedStyle(document.body).backgroundColor;
+        console.log('[Navbar] Navbar transparent, using body background:', bodyBg);
+        bgColor = bodyBg;
+      }
+    }
+    
+    // Calculate luminance to determine if background is light or dark
+    const rgb = bgColor.match(/\d+/g);
+    if (rgb && rgb.length >= 3) {
+      const r = parseInt(rgb[0]);
+      const g = parseInt(rgb[1]);
+      const b = parseInt(rgb[2]);
+      const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+      
+      // Mobile button colors are set by Claude's AI-generated CSS (same as .nav-menu a)
+      // No dynamic color overrides needed - colors come from the generated navbar CSS
+      console.log('[Navbar] Mobile button colors preserved from Claude CSS (luminance:', luminance.toFixed(2) + ')');
+      
+      // FIX ICON SIZES - Ensure SVGs are properly sized and visible
+      // INJECT CRITICAL CSS TO OVERRIDE ANY CONFLICTING RULES
+      const criticalCSS = document.createElement('style');
+      criticalCSS.id = 'zappy-mobile-nav-fix';
+      const htmlLang = document.documentElement.lang || 'en';
+      const htmlDir = document.documentElement.dir || 'ltr';
+      // Check both dir attribute AND lang for RTL detection
+      // dir="rtl" is the most reliable indicator
+      const isRTL = htmlDir === 'rtl' || htmlLang === 'he' || htmlLang === 'ar';
+      
+      criticalCSS.textContent = `
+        /* Hide mobile buttons on desktop, show only on mobile */
+        @media (min-width: 769px) {
+          .mobile-toggle,
+          .phone-header-btn {
+            display: none !important;
+          }
+        }
+        
+        /* Show and position mobile buttons correctly on mobile */
+        @media (max-width: 768px) {
+          .mobile-toggle,
+          .phone-header-btn {
+            position: absolute !important;
+            top: 0 !important;
+            bottom: 0 !important;
+            margin-top: auto !important;
+            margin-bottom: auto !important;
+            z-index: 1001 !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            width: 36px !important;
+            height: 36px !important;
+            border-radius: 50% !important;
+            border: none !important;
+            cursor: pointer !important;
+            padding: 6px !important;
+            background: none !important;
+            color: var(--nav-text, var(--text-light)) !important;
+            touch-action: manipulation !important;
+            -webkit-tap-highlight-color: transparent !important;
+          }
+          
+          /* LTR positioning (default): hamburger LEFT, phone RIGHT */
+          html:not([dir="rtl"]):not([lang="he"]):not([lang="ar"]) .mobile-toggle,
+          html[dir="ltr"] .mobile-toggle {
+            left: 12px !important;
+            right: auto !important;
+          }
+          html:not([dir="rtl"]):not([lang="he"]):not([lang="ar"]) .phone-header-btn,
+          html[dir="ltr"] .phone-header-btn {
+            right: 12px !important;
+            left: auto !important;
+          }
+          
+          /* RTL positioning: hamburger RIGHT, phone LEFT */
+          html[dir="rtl"] .mobile-toggle,
+          html[lang="he"] .mobile-toggle,
+          html[lang="ar"] .mobile-toggle {
+            right: 12px !important;
+            left: auto !important;
+          }
+          html[dir="rtl"] .phone-header-btn,
+          html[lang="he"] .phone-header-btn,
+          html[lang="ar"] .phone-header-btn {
+            left: 12px !important;
+            right: auto !important;
+          }
+          
+          /* CRITICAL: Ensure nav-container has min-height on mobile */
+          /* All children are positioned absolutely/fixed on mobile, so height:auto collapses to 0 */
+          .nav-container {
+            min-height: 70px !important;
+            position: relative !important;
+          }
+          
+          /* Ensure SVG icons are properly sized and inherit color */
+          .mobile-toggle svg,
+          .phone-header-btn svg {
+            width: 24px !important;
+            height: 24px !important;
+            /* Don't force display - let JavaScript control hamburger/close toggle */
+          }
+          
+          /* Reset nav-cta-container on mobile - remove desktop box-shadow/padding */
+          /* that creates a visible ghost box when CTA button is hidden */
+          .nav-cta-container {
+            box-shadow: none !important;
+            padding: 0 !important;
+          }
+          
+          /* Hide nav-cta-container entirely on mobile when there's no lang-switcher */
+          /* (only the CTA button is inside, and it's hidden on mobile) */
+          .nav-cta-container:not(:has(.lang-switcher)) {
+            display: none !important;
+          }
+          
+          /* CRITICAL: Prevent hero image fade gradient from bleeding over headline text */
+          /* The .image-fade-gradient has bottom: -30px (extends below parent) */
+          /* On mobile stacked layout, this overlaps the h1 text below the image */
+          .hero-image-column {
+            overflow: hidden !important;
+          }
+          .image-fade-gradient {
+            bottom: 0 !important;
+          }
+          
+          /* Hide desktop language switcher on mobile - hamburger menu handles it */
+          /* High specificity to override stored CSS */
+          .lang-switcher,
+          .nav-cta-container .lang-switcher,
+          .nav-container .lang-switcher,
+          .navbar .lang-switcher,
+          .navbar .nav-cta-container .lang-switcher {
+            display: none !important;
+          }
+        }
+      `;
+      
+      // Remove existing fix if present and inject new one
+      const existing = document.getElementById('zappy-mobile-nav-fix');
+      if (existing) existing.remove();
+      document.head.appendChild(criticalCSS);
+      
+      console.log('[Navbar] Critical CSS injected for mobile nav positioning');
+      
+      // ONLY apply inline positioning styles on mobile viewport
+      // On desktop, the CSS handles hiding these buttons with display: none
+      // Inline styles were breaking desktop layout by overriding CSS
+      const isMobileViewport = window.innerWidth <= 768;
+      
+      if (mobileToggle) {
+        // Icon sizing applies to all viewports for consistency
+        const hamburgerIcon = mobileToggle.querySelector('.hamburger-icon');
+        const closeIcon = mobileToggle.querySelector('.close-icon');
+        
+        if (hamburgerIcon) {
+          hamburgerIcon.style.setProperty('width', '24px', 'important');
+          hamburgerIcon.style.setProperty('height', '24px', 'important');
+          hamburgerIcon.style.setProperty('display', 'block', 'important'); // Show hamburger by default
+        }
+        if (closeIcon) {
+          closeIcon.style.setProperty('width', '24px', 'important');
+          closeIcon.style.setProperty('height', '24px', 'important');
+          closeIcon.style.setProperty('display', 'none', 'important'); // Hide close icon by default
+        }
+        
+        // ONLY set positioning inline styles on mobile
+        if (isMobileViewport) {
+          mobileToggle.style.setProperty('position', 'absolute', 'important');
+          mobileToggle.style.setProperty('top', '0', 'important');
+          mobileToggle.style.setProperty('bottom', '0', 'important');
+          mobileToggle.style.setProperty('margin-top', 'auto', 'important');
+          mobileToggle.style.setProperty('margin-bottom', 'auto', 'important');
+          mobileToggle.style.setProperty('z-index', '1001', 'important');
+          
+          // Clear any inline left/right so CSS can take over based on html[dir]
+          mobileToggle.style.removeProperty('left');
+          mobileToggle.style.removeProperty('right');
+          
+          console.log('[Navbar] Mobile toggle positioning applied (mobile viewport)');
+        } else {
+          // On desktop, clear any positioning styles to let CSS handle it
+          mobileToggle.style.removeProperty('position');
+          mobileToggle.style.removeProperty('top');
+          mobileToggle.style.removeProperty('transform');
+          mobileToggle.style.removeProperty('z-index');
+          mobileToggle.style.removeProperty('left');
+          mobileToggle.style.removeProperty('right');
+          console.log('[Navbar] Desktop viewport - cleared mobile toggle inline positioning');
+        }
+      }
+      
+      if (phoneBtn) {
+        // Icon sizing applies to all viewports
+        const phoneIcon = phoneBtn.querySelector('svg');
+        if (phoneIcon) {
+          phoneIcon.style.width = '24px';
+          phoneIcon.style.height = '24px';
+          phoneIcon.setAttribute('width', '24');
+          phoneIcon.setAttribute('height', '24');
+        }
+        
+        // ONLY set positioning inline styles on mobile
+        if (isMobileViewport) {
+          phoneBtn.style.setProperty('position', 'absolute', 'important');
+          phoneBtn.style.setProperty('top', '0', 'important');
+          phoneBtn.style.setProperty('bottom', '0', 'important');
+          phoneBtn.style.setProperty('margin-top', 'auto', 'important');
+          phoneBtn.style.setProperty('margin-bottom', 'auto', 'important');
+          phoneBtn.style.setProperty('z-index', '1001', 'important');
+          
+          // Clear any inline left/right so CSS can take over based on html[dir]
+          phoneBtn.style.removeProperty('left');
+          phoneBtn.style.removeProperty('right');
+          
+          console.log('[Navbar] Phone button positioning applied (mobile viewport)');
+        } else {
+          // On desktop, clear any positioning styles to let CSS handle it
+          phoneBtn.style.removeProperty('position');
+          phoneBtn.style.removeProperty('top');
+          phoneBtn.style.removeProperty('transform');
+          phoneBtn.style.removeProperty('z-index');
+          phoneBtn.style.removeProperty('left');
+          phoneBtn.style.removeProperty('right');
+          console.log('[Navbar] Desktop viewport - cleared phone button inline positioning');
+        }
+      }
+    } else {
+      console.log('[Navbar] Could not parse background color:', bgColor);
+    }
+    
+    // MOBILE MENU TOGGLE
+    // Re-query in case DOM changed (mobileToggle already declared at top of function)
+    mobileToggle = document.getElementById('mobileToggle') ||
+                   document.querySelector('.mobile-toggle') ||
+                   document.querySelector('.hamburger') ||
+                   document.querySelector('.hamburger-menu') ||
+                   document.querySelector('.menu-toggle') ||
+                   document.querySelector('.burger-menu') ||
+                   document.querySelector('[aria-label="Menu"]') ||
+                   document.querySelector('[aria-label="תפריט"]');
+    
+    // EXPANDED SEARCH: Find nav menu by ID or class
+    const navMenu = document.getElementById('navMenu') ||
+                  document.querySelector('.nav-menu') ||
+                  document.querySelector('.nav-links') ||
+                  document.querySelector('nav ul:not(.submenu)');
+    
+    if (!mobileToggle || !navMenu) {
+      console.log('[Navbar] Mobile toggle or menu not found:', { toggle: !!mobileToggle, menu: !!navMenu });
+      return;
+    }
+    
+    // Ensure navMenu has ID for CSS targeting
+    if (!navMenu.id) {
+      navMenu.id = 'navMenu';
+    }
+    
+    console.log('[Navbar] Initializing mobile menu...');
+    
+    // Remove any existing event listeners by cloning the button
+    const newToggle = mobileToggle.cloneNode(true);
+    mobileToggle.parentNode.replaceChild(newToggle, mobileToggle);
+    
+    // Toggle menu handler (shared by click and touchend)
+    function handleToggle(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      
+      const hamburgerIcon = newToggle.querySelector('.hamburger-icon');
+      const closeIcon = newToggle.querySelector('.close-icon');
+      const isActive = navMenu.classList.contains('active');
+      
+      if (isActive) {
+        // Close menu
+        navMenu.classList.remove('active');
+        if (hamburgerIcon) hamburgerIcon.style.setProperty('display', 'block', 'important');
+        if (closeIcon) closeIcon.style.setProperty('display', 'none', 'important');
+        document.body.style.overflow = '';
+        console.log('[Navbar] Menu closed');
+      } else {
+        // Open menu
+        navMenu.classList.add('active');
+        if (hamburgerIcon) hamburgerIcon.style.setProperty('display', 'none', 'important');
+        if (closeIcon) closeIcon.style.setProperty('display', 'block', 'important');
+        document.body.style.overflow = 'hidden';
+        console.log('[Navbar] Menu opened');
+      }
+    }
+    
+    // Use click for desktop/emulation and touchend as iOS Safari fallback.
+    // Prevent double-fire with a timestamp guard.
+    var lastToggleTime = 0;
+    function guardedToggle(e) {
+      var now = Date.now();
+      if (now - lastToggleTime < 300) return;
+      lastToggleTime = now;
+      handleToggle(e);
+    }
+    
+    newToggle.addEventListener('click', guardedToggle);
+    newToggle.addEventListener('touchend', guardedToggle);
+    
+    // Close menu when clicking nav links (but NOT dropdown toggles)
+    const navLinks = navMenu.querySelectorAll('a');
+    navLinks.forEach(function(link) {
+      link.addEventListener('click', function() {
+        // Don't close if it's a dropdown child (unless it's a real navigation link)
+        if (this.getAttribute('href') === '#') return;
+        
+        const hamburgerIcon = newToggle.querySelector('.hamburger-icon');
+        const closeIcon = newToggle.querySelector('.close-icon');
+        
+        navMenu.classList.remove('active');
+        if (hamburgerIcon) hamburgerIcon.style.setProperty('display', 'block', 'important');
+        if (closeIcon) closeIcon.style.setProperty('display', 'none', 'important');
+        document.body.style.overflow = '';
+        console.log('[Navbar] Menu closed (link clicked)');
+      });
+    });
+    
+    // DROPDOWN MENU TOGGLE (for mobile and touch devices)
+    var dropdownToggles = navMenu.querySelectorAll('.dropdown-toggle');
+    dropdownToggles.forEach(function(toggle) {
+      toggle.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var parent = this.closest('.nav-dropdown');
+        if (!parent) return;
+        
+        // Close other open dropdowns at the same level
+        var siblings = parent.parentNode.querySelectorAll('.nav-dropdown.open');
+        siblings.forEach(function(sib) {
+          if (sib !== parent) sib.classList.remove('open');
+        });
+        
+        parent.classList.toggle('open');
+        console.log('[Navbar] Dropdown toggled:', parent.classList.contains('open') ? 'open' : 'closed');
+      });
+    });
+    
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', function(e) {
+      if (!e.target.closest('.nav-dropdown')) {
+        var openDropdowns = document.querySelectorAll('.nav-dropdown.open');
+        openDropdowns.forEach(function(dd) { dd.classList.remove('open'); });
+      }
+    });
+    
+    console.log('[Navbar] Dropdown handlers initialized for ' + dropdownToggles.length + ' dropdowns');
+    
+    // Phone button functionality (phoneBtn already declared at top of function)
+    if (phoneBtn) {
+      phoneBtn.addEventListener('click', function() {
+        // Get phone number from placeholder in page or use default
+        const phoneLinks = document.querySelectorAll('a[href^="tel:"]');
+        const phoneNumber = phoneLinks.length > 0 
+          ? phoneLinks[0].getAttribute('href').replace('tel:', '')
+          : '[business_phone]';
+        
+        window.location.href = 'tel:' + phoneNumber;
+        console.log('[Navbar] Phone button clicked');
+      });
+    }
+    
+    console.log('[Navbar] Mobile menu initialized successfully');
+    
+    // WhatsApp button visibility is now controlled via CSS (siteSettings).
+    // No JS-based desktop hiding — the button is visible on both mobile and desktop by default.
+  });
+})();
+
+</script>
+  
+  <main>
+    <section data-band-index="0" class="home-hero-section" data-layout-spec="Home-hero" data-hero-type="fullscreen-scrim">
+  <!-- Background Image -->
+  <div class="home-hero-bg">
+    <img data-hero-bg="true" data-placeholder="home-hero-image-1" data-context="Cinematic portrait of Daria, a female physicist and author in her 30s-40s, standing in an atmospheric intellectual setting that blends a private study, a lecture stage, and a recording studio. Deep violet and teal color grading, dramatic chiaroscuro lighting, bookshelves with scientific volumes in the background, a microphone subtly visible, warm amber accent light catching her face. The composition should be open and airy on the left/lower-left third to leave room for typography overlay. Moody, editorial, premium photography feel with subtle paper grain texture." width="1440" height="900" src="/assets/site-home-hero-image-1.webp" alt="Daria — physicist, author, speaker, and podcast host">
+  </div>
+
+  <!-- Scrim Overlay -->
+  <div class="home-hero-scrim" aria-hidden="true"></div>
+
+  <!-- Decorative: Sound Wave Lines (top-right) -->
+  <svg class="home-hero-deco-wave" data-no-icon-edit="true" aria-hidden="true" viewBox="0 0 320 80" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+    <g fill="none">
+      <rect x="0" y="32" width="4" height="16" rx="2" fill="#C8973A" opacity="0.18"></rect>
+      <rect x="10" y="20" width="4" height="40" rx="2" fill="#C8973A" opacity="0.18"></rect>
+      <rect x="20" y="10" width="4" height="60" rx="2" fill="#C8973A" opacity="0.18"></rect>
+      <rect x="30" y="25" width="4" height="30" rx="2" fill="#C8973A" opacity="0.18"></rect>
+      <rect x="40" y="5" width="4" height="70" rx="2" fill="#C8973A" opacity="0.18"></rect>
+      <rect x="50" y="18" width="4" height="44" rx="2" fill="#C8973A" opacity="0.18"></rect>
+      <rect x="60" y="28" width="4" height="24" rx="2" fill="#C8973A" opacity="0.18"></rect>
+      <rect x="70" y="12" width="4" height="56" rx="2" fill="#C8973A" opacity="0.18"></rect>
+      <rect x="80" y="22" width="4" height="36" rx="2" fill="#C8973A" opacity="0.18"></rect>
+      <rect x="90" y="8" width="4" height="64" rx="2" fill="#C8973A" opacity="0.18"></rect>
+      <rect x="100" y="30" width="4" height="20" rx="2" fill="#C8973A" opacity="0.18"></rect>
+      <rect x="110" y="14" width="4" height="52" rx="2" fill="#C8973A" opacity="0.18"></rect>
+      <rect x="120" y="26" width="4" height="28" rx="2" fill="#C8973A" opacity="0.18"></rect>
+      <rect x="130" y="4" width="4" height="72" rx="2" fill="#C8973A" opacity="0.18"></rect>
+      <rect x="140" y="20" width="4" height="40" rx="2" fill="#C8973A" opacity="0.18"></rect>
+      <rect x="150" y="32" width="4" height="16" rx="2" fill="#C8973A" opacity="0.18"></rect>
+      <rect x="160" y="10" width="4" height="60" rx="2" fill="#C8973A" opacity="0.18"></rect>
+      <rect x="170" y="24" width="4" height="32" rx="2" fill="#C8973A" opacity="0.18"></rect>
+      <rect x="180" y="16" width="4" height="48" rx="2" fill="#C8973A" opacity="0.18"></rect>
+      <rect x="190" y="35" width="4" height="10" rx="2" fill="#C8973A" opacity="0.18"></rect>
+      <rect x="200" y="18" width="4" height="44" rx="2" fill="#C8973A" opacity="0.18"></rect>
+      <rect x="210" y="6" width="4" height="68" rx="2" fill="#C8973A" opacity="0.18"></rect>
+      <rect x="220" y="28" width="4" height="24" rx="2" fill="#C8973A" opacity="0.18"></rect>
+      <rect x="230" y="14" width="4" height="52" rx="2" fill="#C8973A" opacity="0.18"></rect>
+      <rect x="240" y="22" width="4" height="36" rx="2" fill="#C8973A" opacity="0.18"></rect>
+      <rect x="250" y="30" width="4" height="20" rx="2" fill="#C8973A" opacity="0.18"></rect>
+      <rect x="260" y="8" width="4" height="64" rx="2" fill="#C8973A" opacity="0.18"></rect>
+      <rect x="270" y="20" width="4" height="40" rx="2" fill="#C8973A" opacity="0.18"></rect>
+      <rect x="280" y="32" width="4" height="16" rx="2" fill="#C8973A" opacity="0.18"></rect>
+      <rect x="290" y="12" width="4" height="56" rx="2" fill="#C8973A" opacity="0.18"></rect>
+      <rect x="300" y="26" width="4" height="28" rx="2" fill="#C8973A" opacity="0.18"></rect>
+      <rect x="310" y="18" width="4" height="44" rx="2" fill="#C8973A" opacity="0.18"></rect>
+    </g>
+  </svg>
+
+  <!-- Decorative: Celestial Orbit Rings (bottom-right) -->
+  <svg class="home-hero-deco-orbit" data-no-icon-edit="true" aria-hidden="true" viewBox="0 0 280 280" xmlns="http://www.w3.org/2000/svg">
+    <g fill="none" stroke="#C8973A" stroke-width="0.8" opacity="0.12">
+      <circle cx="140" cy="140" r="130"></circle>
+      <circle cx="140" cy="140" r="100"></circle>
+      <circle cx="140" cy="140" r="70"></circle>
+      <circle cx="140" cy="140" r="40"></circle>
+      <circle cx="140" cy="10" r="3" fill="#C8973A" stroke="none"></circle>
+      <circle cx="270" cy="140" r="3" fill="#C8973A" stroke="none"></circle>
+      <circle cx="140" cy="270" r="3" fill="#C8973A" stroke="none"></circle>
+      <circle cx="10" cy="140" r="3" fill="#C8973A" stroke="none"></circle>
+      <circle cx="230" cy="50" r="2" fill="#C8973A" stroke="none"></circle>
+      <circle cx="50" cy="230" r="2" fill="#C8973A" stroke="none"></circle>
+      <line x1="140" y1="0" x2="140" y2="280" stroke-dasharray="4 8" opacity="0.5"></line>
+      <line x1="0" y1="140" x2="280" y2="140" stroke-dasharray="4 8" opacity="0.5"></line>
+    </g>
+  </svg>
+
+  <!-- Amber accent rule -->
+  <div class="home-hero-accent-rule" aria-hidden="true"></div>
+
+  <!-- Content Overlay -->
+  <div class="home-hero-content">
+    <div class="home-hero-content-inner">
+      <span class="home-hero-eyebrow">Physicist · Author · Speaker · Podcast Host</span>
+      <h1 class="home-hero-h1">Where Physics<br>Meets the Page</h1>
+      <h3 class="home-hero-h3">Complex ideas made human, vivid, and impossible to forget.</h3>
+      <div class="home-hero-ctas">
+        <a href="/speaking" class="home-hero-btn-primary">Book a Talk</a>
+        <a href="/podcast" class="home-hero-btn-secondary">
+          <span class="home-hero-btn-icon" aria-hidden="true">
+            <svg data-element-type="icon" data-icon-type="svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polygon points="10 8 16 12 10 16 10 8" fill="currentColor" stroke="none"></polygon>
+            </svg>
+          </span>
+          Listen to the Podcast
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Divider: torn-paper edge transitioning to parchment section -->
+  <div class="home-hero-divider-wrapper">
+    <svg data-no-icon-edit="true" aria-hidden="true" viewBox="0 0 1440 90" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,90 L0,42 Q30,36 60,44 T120,38 Q160,43 200,35 T280,40 Q320,37 360,44 T440,36 Q490,42 540,34 T620,40 Q660,38 700,44 T780,36 Q830,43 880,35 T960,41 Q1000,37 1040,44 T1120,36 Q1170,42 1210,35 T1300,40 Q1340,37 1380,44 T1440,38 L1440,90 Z" fill="#F0EAE0"></path>
+    </svg>
+  </div>
+</section>
+
+<section data-band-index="1" class="home-features-section" data-layout-spec="Home-features">
+
+  <!-- Ink script texture decoration -->
+  <div class="hfs-ink-texture" aria-hidden="true">
+    <svg data-no-icon-edit="true" aria-hidden="true" viewBox="0 0 400 600" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+      <g opacity="0.07" stroke="#8B7D6B" stroke-width="1">
+        <path d="M20 40 Q80 35 140 42 T260 38"></path>
+        <path d="M10 60 Q90 55 160 62 T300 58"></path>
+        <path d="M30 80 Q100 75 180 82 T320 78"></path>
+        <path d="M5 100 Q85 95 155 102 T280 98"></path>
+        <path d="M25 120 Q95 115 175 122 T310 118"></path>
+        <path d="M15 140 Q75 135 145 142 T270 138"></path>
+        <path d="M35 160 Q105 155 185 162 T330 158"></path>
+        <path d="M8 180 Q88 175 158 182 T290 178"></path>
+        <path d="M22 200 Q92 195 172 202 T315 198"></path>
+        <path d="M40 220 Q110 215 190 222 T340 218"></path>
+        <path d="M12 240 Q82 235 152 242 T275 238"></path>
+        <path d="M28 260 Q98 255 178 262 T322 258"></path>
+        <path d="M18 280 Q78 275 148 282 T268 278"></path>
+        <path d="M38 300 Q108 295 188 302 T335 298"></path>
+        <path d="M6 320 Q86 315 156 322 T285 318"></path>
+      </g>
+    </svg>
+  </div>
+
+  <!-- Celestial orbit rings decoration -->
+  <div class="hfs-orbit-rings" aria-hidden="true">
+    <svg data-no-icon-edit="true" aria-hidden="true" viewBox="0 0 280 280" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g opacity="0.12" stroke="#C8973A" stroke-width="0.8" fill="none">
+        <circle cx="140" cy="140" r="60"></circle>
+        <circle cx="140" cy="140" r="90"></circle>
+        <circle cx="140" cy="140" r="120"></circle>
+        <circle cx="140" cy="140" r="135"></circle>
+        <circle cx="200" cy="140" r="4" fill="#C8973A"></circle>
+        <circle cx="140" cy="50" r="3" fill="#C8973A"></circle>
+        <circle cx="80" cy="170" r="2.5" fill="#C8973A"></circle>
+        <line x1="140" y1="5" x2="140" y2="275"></line>
+        <line x1="5" y1="140" x2="275" y2="140"></line>
+        <line x1="45" y1="45" x2="235" y2="235" stroke-dasharray="4 6"></line>
+        <line x1="235" y1="45" x2="45" y2="235" stroke-dasharray="4 6"></line>
+      </g>
+    </svg>
+  </div>
+
+  <div class="hfs-container">
+
+    <!-- Intro Block -->
+    <div class="hfs-intro">
+      <div class="hfs-amber-rule" aria-hidden="true"></div>
+      <h2 class="hfs-heading">Where Equations Meet Narrative</h2>
+      <p class="hfs-subtext">Daria is a rare convergence of scientific rigour and literary imagination — a physicist with a PhD who writes books, commands stages, and hosts conversations that make the universe feel personal. Across three distinct channels, one coherent intellectual world unfolds.</p>
+    </div>
+
+    <!-- Asymmetric Feature Grid -->
+    <div class="hfs-grid">
+
+      <!-- Panel 1: Books — tall left panel -->
+      <article class="hfs-panel hfs-panel--tall hfs-panel--books">
+        <div class="hfs-panel-backplate hfs-panel-backplate--tl" aria-hidden="true"></div>
+        <div class="hfs-panel-backplate hfs-panel-backplate--br" aria-hidden="true"></div>
+        <div class="hfs-panel-image-wrap">
+          <img data-placeholder="home-features-image-1" data-context="An artistic flat-lay of open books, handwritten physics equations on aged paper, a fountain pen, and scattered manuscript pages with scientific diagrams — warm parchment tones, editorial photography style, literary and scientific aesthetic" width="600" height="780" src="/assets/site-home-features-image-1.webp" alt="Books and writing by Daria — physics meets literature">
+        </div>
+        <div class="hfs-panel-content">
+          <span class="hfs-panel-label">01</span>
+          <div class="hfs-amber-rule hfs-amber-rule--short" aria-hidden="true"></div>
+          <h3 class="hfs-panel-title">Books &amp; Writing</h3>
+          <p class="hfs-panel-desc">From peer-reviewed papers to published novels, Daria's writing bridges the gap between laboratory precision and the emotional truth of a well-told story. Each page is an invitation to see the world through a physicist's curious eye.</p>
+          <a href="/books" class="hfs-panel-link">Explore the writing <span aria-hidden="true">→</span></a>
+        </div>
+        <!-- Formula texture overlay -->
+        <div class="hfs-formula-texture" aria-hidden="true">
+          <svg data-no-icon-edit="true" aria-hidden="true" viewBox="0 0 200 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <g opacity="0.06" fill="none" stroke="#221C1A" stroke-width="0.7" font-family="monospace">
+              <text x="10" y="20" font-size="11" fill="#221C1A" opacity="0.08">E = mc²</text>
+              <text x="40" y="45" font-size="9" fill="#221C1A" opacity="0.06">∇·B = 0</text>
+              <text x="8" y="70" font-size="10" fill="#221C1A" opacity="0.07">Ψ(x,t)</text>
+              <text x="50" y="95" font-size="8" fill="#221C1A" opacity="0.05">∂²φ/∂t²</text>
+              <text x="15" y="115" font-size="9" fill="#221C1A" opacity="0.06">λ = h/p</text>
+            </g>
+          </svg>
+        </div>
+      </article>
+
+      <!-- Right column: two stacked panels -->
+      <div class="hfs-panel-stack">
+
+        <!-- Panel 2: Lectures -->
+        <article class="hfs-panel hfs-panel--lectures">
+          <div class="hfs-panel-backplate hfs-panel-backplate--tr" aria-hidden="true"></div>
+          <div class="hfs-panel-image-wrap hfs-panel-image-wrap--horizontal">
+            <img data-placeholder="home-features-image-2" data-context="A dynamic photograph of a female scientist and author speaking on a stage before a large audience, dramatic lighting, a projected equation or cosmic image behind her, TED-style venue, powerful and intellectual atmosphere" width="600" height="340" src="/assets/site-home-features-image-2.webp" alt="Daria delivering a public lecture on science and storytelling">
+          </div>
+          <div class="hfs-panel-content">
+            <span class="hfs-panel-label">02</span>
+            <div class="hfs-amber-rule hfs-amber-rule--short" aria-hidden="true"></div>
+            <h3 class="hfs-panel-title">Lectures &amp; Public Talks</h3>
+            <p class="hfs-panel-desc">On stages from university halls to international symposia, Daria transforms complex physics into riveting live experiences — part lecture, part performance, entirely unforgettable.</p>
+            <a href="/talks" class="hfs-panel-link">View upcoming talks <span aria-hidden="true">→</span></a>
+          </div>
+        </article>
+
+        <!-- Panel 3: Podcast -->
+        <article class="hfs-panel hfs-panel--podcast">
+          <div class="hfs-panel-backplate hfs-panel-backplate--bl" aria-hidden="true"></div>
+          <div class="hfs-panel-image-wrap hfs-panel-image-wrap--horizontal">
+            <img data-placeholder="home-features-image-3" data-context="An intimate podcast studio setup with vintage microphone, warm amber lighting, notebooks filled with equations and story notes, headphones resting on a wooden desk, atmospheric and intellectual mood, warm parchment and dark wood tones" width="600" height="340" src="/assets/site-home-features-image-3.webp" alt="Daria recording her science and storytelling podcast">
+          </div>
+          <div class="hfs-panel-content">
+            <span class="hfs-panel-label">03</span>
+            <div class="hfs-amber-rule hfs-amber-rule--short" aria-hidden="true"></div>
+            <h3 class="hfs-panel-title">Podcast &amp; Audio Essays</h3>
+            <p class="hfs-panel-desc">Weekly audio essays that weave scientific discovery with personal reflection — each episode a carefully crafted journey from quantum uncertainty to the stories we tell ourselves about the cosmos.</p>
+            <a href="/podcast" class="hfs-panel-link">Listen to episodes <span aria-hidden="true">→</span></a>
+          </div>
+        </article>
+
+      </div>
+      <!-- end right stack -->
+
+    </div>
+    <!-- end grid -->
+
+  </div>
+  <!-- end container -->
+
+  <!-- Bottom divider: violet-to-teal gradient band with curved clip-path -->
+  <div class="hfs-divider-wrapper" aria-hidden="true">
+    <svg data-no-icon-edit="true" aria-hidden="true" viewBox="0 0 1440 100" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="hfs-divider-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#7B3FE4"></stop>
+          <stop offset="50%" stop-color="#5B3DA8"></stop>
+          <stop offset="100%" stop-color="#3F7C85"></stop>
+        </linearGradient>
+      </defs>
+      <path d="M0,100 L0,55 Q180,20 360,45 T720,30 Q900,18 1080,42 T1440,28 L1440,100 Z" fill="#0F0B18"></path>
+      <path d="M0,100 L0,68 Q200,42 400,58 T800,44 Q1000,36 1200,54 T1440,42 L1440,100 Z" fill="#0F0B18" opacity="1"></path>
+    </svg>
+  </div>
+
+</section>
+
+<section data-band-index="2" class="home-story-section" data-layout-spec="Home-story">
+  <!-- Decorative celestial linework background -->
+  <div class="home-story-section__celestial-bg" aria-hidden="true">
+    <svg data-no-icon-edit="true" aria-hidden="true" viewBox="0 0 1280 700" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" class="home-story-section__celestial-svg">
+      <!-- Concentric orbit rings -->
+      <circle cx="960" cy="280" r="180" fill="none" stroke="rgba(200,151,58,0.07)" stroke-width="1"></circle>
+      <circle cx="960" cy="280" r="260" fill="none" stroke="rgba(200,151,58,0.05)" stroke-width="1"></circle>
+      <circle cx="960" cy="280" r="340" fill="none" stroke="rgba(74,63,122,0.08)" stroke-width="1"></circle>
+      <!-- Dot markers on orbit -->
+      <circle cx="960" cy="100" r="2.5" fill="rgba(200,151,58,0.3)"></circle>
+      <circle cx="1140" cy="280" r="2" fill="rgba(200,151,58,0.25)"></circle>
+      <circle cx="960" cy="460" r="2" fill="rgba(200,151,58,0.2)"></circle>
+      <circle cx="780" cy="280" r="2.5" fill="rgba(200,151,58,0.2)"></circle>
+      <!-- Constellation dots -->
+      <circle cx="120" cy="80" r="1.5" fill="rgba(200,151,58,0.4)"></circle>
+      <circle cx="180" cy="140" r="1" fill="rgba(200,151,58,0.3)"></circle>
+      <circle cx="240" cy="90" r="2" fill="rgba(200,151,58,0.35)"></circle>
+      <circle cx="300" cy="160" r="1.2" fill="rgba(200,151,58,0.25)"></circle>
+      <circle cx="80" cy="200" r="1.5" fill="rgba(74,63,122,0.5)"></circle>
+      <line x1="120" y1="80" x2="180" y2="140" stroke="rgba(200,151,58,0.12)" stroke-width="0.8"></line>
+      <line x1="180" y1="140" x2="240" y2="90" stroke="rgba(200,151,58,0.12)" stroke-width="0.8"></line>
+      <line x1="240" y1="90" x2="300" y2="160" stroke="rgba(200,151,58,0.1)" stroke-width="0.8"></line>
+      <!-- Waveform lines -->
+      <g opacity="0.12">
+        <line x1="60" y1="580" x2="60" y2="560" stroke="rgba(200,151,58,1)" stroke-width="1.5"></line>
+        <line x1="72" y1="580" x2="72" y2="548" stroke="rgba(200,151,58,1)" stroke-width="1.5"></line>
+        <line x1="84" y1="580" x2="84" y2="535" stroke="rgba(200,151,58,1)" stroke-width="1.5"></line>
+        <line x1="96" y1="580" x2="96" y2="520" stroke="rgba(200,151,58,1)" stroke-width="1.5"></line>
+        <line x1="108" y1="580" x2="108" y2="542" stroke="rgba(200,151,58,1)" stroke-width="1.5"></line>
+        <line x1="120" y1="580" x2="120" y2="555" stroke="rgba(200,151,58,1)" stroke-width="1.5"></line>
+        <line x1="132" y1="580" x2="132" y2="530" stroke="rgba(200,151,58,1)" stroke-width="1.5"></line>
+        <line x1="144" y1="580" x2="144" y2="545" stroke="rgba(200,151,58,1)" stroke-width="1.5"></line>
+        <line x1="156" y1="580" x2="156" y2="562" stroke="rgba(200,151,58,1)" stroke-width="1.5"></line>
+      </g>
+    </svg>
+  </div>
+
+  <div class="home-story-section__container">
+    <!-- Content Column -->
+    <div class="home-story-section__content">
+      <div class="home-story-section__amber-rule" aria-hidden="true"></div>
+      <span class="home-story-section__eyebrow">The Story</span>
+      <h2 class="home-story-section__heading">Between the Laboratory<br>and the Page</h2>
+      <p class="home-story-section__narrative">There is a rare kind of mind that moves freely between the precision of a physics equation and the open horizon of a literary sentence — that finds in both the same hunger for truth. Daria's work lives in that threshold: where rigorous doctoral research meets the craft of narrative, where a whiteboard full of formulas gives way to a page full of wonder. Her books, lectures, and podcast are not translations of science into simpler terms — they are original acts of imagination that treat the audience as fellow explorers.</p>
+
+      <div class="home-story-section__statements">
+        <div class="home-story-section__statement">
+          <div class="home-story-section__statement-marker" aria-hidden="true">
+            <svg data-element-type="icon" data-icon-type="svg" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="10" cy="10" r="3" fill="rgba(200,151,58,0.9)"></circle>
+              <circle cx="10" cy="10" r="7" fill="none" stroke="rgba(200,151,58,0.35)" stroke-width="1"></circle>
+            </svg>
+          </div>
+          <div class="home-story-section__statement-body">
+            <h3 class="home-story-section__statement-title">Research Depth</h3>
+            <p class="home-story-section__statement-text">A PhD in physics grounds every idea in verifiable reality — no metaphor is deployed without the weight of evidence behind it.</p>
+          </div>
+        </div>
+
+        <div class="home-story-section__statement">
+          <div class="home-story-section__statement-marker" aria-hidden="true">
+            <svg data-element-type="icon" data-icon-type="svg" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="10" cy="10" r="3" fill="rgba(200,151,58,0.9)"></circle>
+              <circle cx="10" cy="10" r="7" fill="none" stroke="rgba(200,151,58,0.35)" stroke-width="1"></circle>
+            </svg>
+          </div>
+          <div class="home-story-section__statement-body">
+            <h3 class="home-story-section__statement-title">Clarity of Expression</h3>
+            <p class="home-story-section__statement-text">As an author, Daria has cultivated a voice that renders the invisible visible — transforming complex phenomena into language that resonates and endures.</p>
+          </div>
+        </div>
+
+        <div class="home-story-section__statement">
+          <div class="home-story-section__statement-marker" aria-hidden="true">
+            <svg data-element-type="icon" data-icon-type="svg" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="10" cy="10" r="3" fill="rgba(200,151,58,0.9)"></circle>
+              <circle cx="10" cy="10" r="7" fill="none" stroke="rgba(200,151,58,0.35)" stroke-width="1"></circle>
+            </svg>
+          </div>
+          <div class="home-story-section__statement-body">
+            <h3 class="home-story-section__statement-title">Public Engagement</h3>
+            <p class="home-story-section__statement-text">From lecture halls to podcast studios, Daria meets audiences where curiosity lives — across formats, platforms, and the full spectrum of human wonder.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Image Column -->
+    <figure class="home-story-section__image-block">
+      <div class="home-story-section__image-frame">
+        <img data-placeholder="home-story-image-1" data-context="A cinematic, atmospheric portrait of a woman physicist and author in a dramatic editorial style. She stands near a large window or against a dark background with faint equations and constellation patterns. She holds an open book, and the mood blends scientific precision with literary imagination. Warm amber light catches her face. The composition feels like a premium magazine editorial — moody, intellectual, confident. Dark background with violet and teal atmospheric glow." width="600" height="760" src="/assets/site-home-story-image-1.webp" alt="Daria — physicist, author, and public speaker">
+        <div class="home-story-section__image-overlay" aria-hidden="true"></div>
+      </div>
+      <figcaption class="home-story-section__image-caption">
+        <span class="home-story-section__caption-label">Dr. Daria</span>
+        <span class="home-story-section__caption-role">Physicist · Author · Speaker · Podcast Host</span>
+      </figcaption>
+    </figure>
+  </div>
+
+  <!-- Bottom constellation-dotted arc divider transitioning to light section -->
+  <div class="home-story-section__divider-wrapper">
+    <svg data-no-icon-edit="true" aria-hidden="true" viewBox="0 0 1280 90" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Constellation dots dissolving into light -->
+      <circle cx="160" cy="28" r="1.8" fill="rgba(200,151,58,0.45)"></circle>
+      <circle cx="240" cy="18" r="1.2" fill="rgba(200,151,58,0.3)"></circle>
+      <circle cx="360" cy="30" r="2" fill="rgba(200,151,58,0.35)"></circle>
+      <circle cx="480" cy="14" r="1.4" fill="rgba(200,151,58,0.25)"></circle>
+      <circle cx="580" cy="26" r="1.6" fill="rgba(200,151,58,0.2)"></circle>
+      <circle cx="700" cy="10" r="1.2" fill="rgba(200,151,58,0.18)"></circle>
+      <circle cx="820" cy="22" r="1.8" fill="rgba(200,151,58,0.14)"></circle>
+      <circle cx="940" cy="16" r="1" fill="rgba(200,151,58,0.1)"></circle>
+      <circle cx="1060" cy="28" r="1.4" fill="rgba(200,151,58,0.08)"></circle>
+      <circle cx="1160" cy="12" r="1" fill="rgba(200,151,58,0.06)"></circle>
+      <line x1="160" y1="28" x2="240" y2="18" stroke="rgba(200,151,58,0.15)" stroke-width="0.7"></line>
+      <line x1="240" y1="18" x2="360" y2="30" stroke="rgba(200,151,58,0.12)" stroke-width="0.7"></line>
+      <line x1="360" y1="30" x2="480" y2="14" stroke="rgba(200,151,58,0.1)" stroke-width="0.7"></line>
+      <line x1="480" y1="14" x2="580" y2="26" stroke="rgba(200,151,58,0.08)" stroke-width="0.7"></line>
+      <line x1="580" y1="26" x2="700" y2="10" stroke="rgba(200,151,58,0.06)" stroke-width="0.7"></line>
+      <!-- Filled arc that merges into the light section below -->
+      <path d="M0,90 L0,52 Q80,42 160,50 T320,44 Q400,50 480,40 T640,46 Q720,38 800,48 T960,42 Q1040,50 1120,40 T1280,48 L1280,90 Z" fill="#F0EAE0"></path>
+    </svg>
+  </div>
+</section>
+
+<section data-band-index="3" class="home-showcase-section" data-layout-spec="Home-showcase">
+  <!-- Paper grain overlay -->
+  <div class="home-showcase-section .showcase-grain" aria-hidden="true"></div>
+
+  <!-- Ink script texture decoration -->
+  <div class="showcase-ink-texture" aria-hidden="true">
+    <svg data-no-icon-edit="true" aria-hidden="true" viewBox="0 0 400 600" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+      <line x1="20" y1="30" x2="380" y2="45" stroke="#8B7D6B" stroke-width="0.8" stroke-dasharray="3 8"></line>
+      <line x1="10" y1="70" x2="370" y2="58" stroke="#8B7D6B" stroke-width="0.6" stroke-dasharray="5 12"></line>
+      <line x1="30" y1="110" x2="390" y2="95" stroke="#8B7D6B" stroke-width="0.7" stroke-dasharray="2 10"></line>
+      <line x1="5" y1="150" x2="360" y2="138" stroke="#8B7D6B" stroke-width="0.5" stroke-dasharray="4 9"></line>
+      <line x1="25" y1="190" x2="385" y2="178" stroke="#8B7D6B" stroke-width="0.8" stroke-dasharray="6 11"></line>
+      <line x1="15" y1="230" x2="375" y2="218" stroke="#8B7D6B" stroke-width="0.6" stroke-dasharray="3 7"></line>
+      <line x1="35" y1="270" x2="395" y2="255" stroke="#8B7D6B" stroke-width="0.7" stroke-dasharray="5 13"></line>
+      <line x1="8" y1="310" x2="368" y2="298" stroke="#8B7D6B" stroke-width="0.5" stroke-dasharray="2 8"></line>
+      <line x1="22" y1="350" x2="382" y2="338" stroke="#8B7D6B" stroke-width="0.8" stroke-dasharray="4 10"></line>
+      <line x1="12" y1="390" x2="372" y2="378" stroke="#8B7D6B" stroke-width="0.6" stroke-dasharray="6 9"></line>
+      <line x1="28" y1="430" x2="388" y2="418" stroke="#8B7D6B" stroke-width="0.7" stroke-dasharray="3 11"></line>
+      <line x1="6" y1="470" x2="366" y2="458" stroke="#8B7D6B" stroke-width="0.5" stroke-dasharray="5 8"></line>
+      <line x1="18" y1="510" x2="378" y2="498" stroke="#8B7D6B" stroke-width="0.8" stroke-dasharray="2 12"></line>
+      <line x1="32" y1="550" x2="392" y2="538" stroke="#8B7D6B" stroke-width="0.6" stroke-dasharray="4 7"></line>
+    </svg>
+  </div>
+
+  <div class="showcase-container">
+    <!-- Intro block -->
+    <div class="showcase-intro">
+      <div class="showcase-amber-rule" aria-hidden="true"></div>
+      <h2 class="showcase-heading">Selected Works</h2>
+      <p class="showcase-subtext">From the physics lab to the printed page and the recording studio — a curated view of the ideas, stories, and conversations that define this intellectual world.</p>
+    </div>
+
+    <!-- Mosaic grid -->
+    <div class="showcase-mosaic">
+
+      <!-- Wide feature card: Book -->
+      <article class="showcase-card showcase-card--wide">
+        <div class="showcase-card-image-wrap">
+          <img data-placeholder="home-showcase-image-1" data-context="An elegant editorial book cover photograph for a physics-meets-literature author named Daria. The book rests on a warm parchment-toned surface with soft light, surrounded by handwritten equations and scattered pages. Grainy film texture, muted warm tones, prestigious and literary atmosphere." width="600" height="400" src="/assets/site-home-showcase-image-1.webp" alt="Daria book cover on a parchment surface with physics equations">
+          <div class="showcase-card-image-overlay" aria-hidden="true"></div>
+          <span class="showcase-card-tag">Books</span>
+        </div>
+        <div class="showcase-card-body">
+          <p class="showcase-card-meta">2024 &nbsp;·&nbsp; Non-Fiction &nbsp;·&nbsp; Physics &amp; Narrative</p>
+          <h3 class="showcase-card-title">The Language of Light</h3>
+          <p class="showcase-card-desc">A rare convergence of scientific rigour and literary grace — this book traces the hidden poetry inside quantum mechanics, written for anyone who has ever looked at the sky and felt the pull of the infinite. Daria's debut as author establishes her as a paramount voice in science communication.</p>
+          <a href="/books" class="showcase-cta">Explore the Books <span class="showcase-cta-arrow" aria-hidden="true">→</span></a>
+        </div>
+      </article>
+
+      <!-- Narrow vertical cards column -->
+      <div class="showcase-verticals">
+
+        <!-- Podcast card -->
+        <article class="showcase-card showcase-card--vertical">
+          <div class="showcase-card-image-wrap showcase-card-image-wrap--short">
+            <img data-placeholder="home-showcase-image-2" data-context="A moody podcast studio setup for a physics PhD and author, with a professional microphone, warm amber lighting, and a bookshelf of science and literature books in the background. Grainy film texture, editorial feel, deep shadows and warm highlights." width="400" height="260" src="/assets/site-home-showcase-image-2.webp" alt="Podcast studio with microphone and science books">
+            <div class="showcase-card-image-overlay" aria-hidden="true"></div>
+            <span class="showcase-card-tag">Podcast</span>
+          </div>
+          <div class="showcase-card-body showcase-card-body--compact">
+            <p class="showcase-card-meta">Season 3 &nbsp;·&nbsp; 48 Episodes &nbsp;·&nbsp; Weekly</p>
+            <h3 class="showcase-card-title">Frequency</h3>
+            <p class="showcase-card-desc">Long-form conversations at the intersection of science, creativity, and the examined life. Each episode is a deep-dive with thinkers, writers, and researchers.</p>
+            <a href="/podcast" class="showcase-cta">Listen to the Podcast <span class="showcase-cta-arrow" aria-hidden="true">→</span></a>
+          </div>
+        </article>
+
+        <!-- Speaking card -->
+        <article class="showcase-card showcase-card--vertical">
+          <div class="showcase-card-image-wrap showcase-card-image-wrap--short">
+            <img data-placeholder="home-showcase-image-3" data-context="A physicist and author on a prestigious conference stage, speaking to a large audience. Dramatic stage lighting with warm amber and cool blue tones, projector showing equations or diagrams in the background. Editorial, cinematic, intellectual atmosphere." width="400" height="260" src="/assets/site-home-showcase-image-3.webp" alt="Daria speaking on stage at a science and literature conference">
+            <div class="showcase-card-image-overlay" aria-hidden="true"></div>
+            <span class="showcase-card-tag">Speaking</span>
+          </div>
+          <div class="showcase-card-body showcase-card-body--compact">
+            <p class="showcase-card-meta">International &nbsp;·&nbsp; Keynotes &amp; Workshops</p>
+            <h3 class="showcase-card-title">On Stage</h3>
+            <p class="showcase-card-desc">Keynotes and talks that transform complex scientific ideas into unforgettable experiences — for universities, festivals, and corporate audiences worldwide.</p>
+            <a href="/speaking" class="showcase-cta">View Speaking Topics <span class="showcase-cta-arrow" aria-hidden="true">→</span></a>
+          </div>
+        </article>
+
+      </div><!-- /.showcase-verticals -->
+    </div><!-- /.showcase-mosaic -->
+  </div><!-- /.showcase-container -->
+
+  <!-- Bottom paper-rip divider transitioning to dark section -->
+  <div class="showcase-divider-wrapper">
+    <svg data-no-icon-edit="true" aria-hidden="true" viewBox="0 0 1440 90" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Dark underlayer peeks upward -->
+      <path d="M0,90 L0,55 Q60,48 120,56 T240,50 Q300,44 360,52 T480,47 Q540,41 600,50 T720,45 Q780,38 840,48 T960,43 Q1020,36 1080,46 T1200,41 Q1260,35 1320,44 T1440,50 L1440,90 Z" fill="#0F0B18"></path>
+      <!-- Main dark fill -->
+      <path d="M0,90 L0,65 Q72,57 144,66 T288,60 Q360,53 432,63 T576,57 Q648,50 720,61 T864,55 Q936,48 1008,58 T1152,52 Q1224,46 1296,56 T1440,62 L1440,90 Z" fill="#0F0B18"></path>
+    </svg>
+  </div>
+</section>
+
+<section data-band-index="4" class="home-cta-section" data-layout-spec="Home-cta">
+  <!-- Paper grain overlay -->
+  <div class="home-cta-grain" aria-hidden="true"></div>
+
+  <!-- Radial violet glow -->
+  <div class="home-cta-glow" aria-hidden="true"></div>
+
+  <!-- Celestial orbit rings decoration -->
+  <svg class="home-cta-orbits" data-no-icon-edit="true" aria-hidden="true" viewBox="0 0 320 320" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="160" cy="160" r="80" stroke="rgba(200,151,58,0.12)" stroke-width="1"></circle>
+    <circle cx="160" cy="160" r="120" stroke="rgba(200,151,58,0.09)" stroke-width="1"></circle>
+    <circle cx="160" cy="160" r="155" stroke="rgba(200,151,58,0.06)" stroke-width="1"></circle>
+    <circle cx="240" cy="80" r="3" fill="rgba(200,151,58,0.25)"></circle>
+    <circle cx="50" cy="200" r="2" fill="rgba(200,151,58,0.18)"></circle>
+    <circle cx="290" cy="210" r="2" fill="rgba(200,151,58,0.15)"></circle>
+    <circle cx="100" cy="55" r="2.5" fill="rgba(200,151,58,0.2)"></circle>
+  </svg>
+
+  <!-- Waveform decoration -->
+  <svg class="home-cta-wave" data-no-icon-edit="true" aria-hidden="true" viewBox="0 0 320 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="0" y="22" width="2" height="16" rx="1" fill="rgba(200,151,58,0.18)"></rect>
+    <rect x="6" y="14" width="2" height="32" rx="1" fill="rgba(200,151,58,0.18)"></rect>
+    <rect x="12" y="8" width="2" height="44" rx="1" fill="rgba(200,151,58,0.18)"></rect>
+    <rect x="18" y="18" width="2" height="24" rx="1" fill="rgba(200,151,58,0.18)"></rect>
+    <rect x="24" y="26" width="2" height="8" rx="1" fill="rgba(200,151,58,0.18)"></rect>
+    <rect x="30" y="12" width="2" height="36" rx="1" fill="rgba(200,151,58,0.18)"></rect>
+    <rect x="36" y="20" width="2" height="20" rx="1" fill="rgba(200,151,58,0.18)"></rect>
+    <rect x="42" y="6" width="2" height="48" rx="1" fill="rgba(200,151,58,0.18)"></rect>
+    <rect x="48" y="16" width="2" height="28" rx="1" fill="rgba(200,151,58,0.18)"></rect>
+    <rect x="54" y="24" width="2" height="12" rx="1" fill="rgba(200,151,58,0.18)"></rect>
+    <rect x="60" y="10" width="2" height="40" rx="1" fill="rgba(200,151,58,0.18)"></rect>
+    <rect x="66" y="18" width="2" height="24" rx="1" fill="rgba(200,151,58,0.18)"></rect>
+    <rect x="72" y="22" width="2" height="16" rx="1" fill="rgba(200,151,58,0.18)"></rect>
+    <rect x="78" y="4" width="2" height="52" rx="1" fill="rgba(200,151,58,0.18)"></rect>
+    <rect x="84" y="14" width="2" height="32" rx="1" fill="rgba(200,151,58,0.18)"></rect>
+    <rect x="90" y="20" width="2" height="20" rx="1" fill="rgba(200,151,58,0.18)"></rect>
+    <rect x="96" y="26" width="2" height="8" rx="1" fill="rgba(200,151,58,0.18)"></rect>
+    <rect x="102" y="12" width="2" height="36" rx="1" fill="rgba(200,151,58,0.18)"></rect>
+    <rect x="108" y="8" width="2" height="44" rx="1" fill="rgba(200,151,58,0.18)"></rect>
+    <rect x="114" y="18" width="2" height="24" rx="1" fill="rgba(200,151,58,0.18)"></rect>
+  </svg>
+
+  <!-- Main content -->
+  <div class="home-cta-container">
+    <div class="home-cta-inner">
+
+      <!-- Amber rule line -->
+      <div class="home-cta-rule" aria-hidden="true"></div>
+
+      <!-- Eyebrow label -->
+      <p class="home-cta-eyebrow">Let's Create Together</p>
+
+      <!-- Heading -->
+      <h2 class="home-cta-heading">Bring Science &amp; Story<br>to Your Stage</h2>
+
+      <!-- Body copy -->
+      <p class="home-cta-body">Whether you're curating a festival programme, producing an interview series, or building educational content that actually resonates — Daria brings the rare combination of rigorous physics and compelling narrative to every collaboration. Available for lectures, panel appearances, podcast conversations, and long-form educational partnerships.</p>
+
+      <!-- CTA buttons -->
+      <div class="home-cta-buttons">
+        <a href="/contact" class="home-cta-btn-primary">
+          <span>Get in Touch</span>
+          <svg data-element-type="icon" data-icon-type="svg" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+          </svg>
+        </a>
+        <a href="/about" class="home-cta-btn-secondary">Discover Daria</a>
+      </div>
+
+      <!-- Decorative footnote -->
+      <p class="home-cta-footnote"><span class="home-cta-footnote-mark">*</span> Lectures &nbsp;·&nbsp; Interviews &nbsp;·&nbsp; Festival Appearances &nbsp;·&nbsp; Educational Content</p>
+
+    </div>
+  </div>
+
+</section>
+  </main>
+  
+  <footer class="site-footer"><div class="footer-inner"><div class="footer-top"><div class="footer-col footer-col--brand"><div class="footer-logo-wrap"><img src="/assets/daria-logo.webp" alt="Daria" class="logo"></div><p class="footer-tagline">Where physics, literature, and storytelling converge — a premium intellectual world built for curious minds.</p><div class="footer-social"></div></div><div class="footer-col footer-col--links"><h4 class="footer-heading">Navigation</h4><ul class="footer-nav"><li><a href="/">Home</a></li><li><a href="/about">About</a></li><li><a href="/books-writing">Books &amp; Writing</a></li><li><a href="/speaking">Speaking</a></li><li><a href="/podcast">Podcast</a></li><li><a href="/contact">Contact</a></li></ul></div><div class="footer-col footer-col--contact"><h4 class="footer-heading">Contact</h4><ul class="footer-contact"><li><span class="contact-icon"><i class="fas fa-envelope"></i></span><span class="contact-text"><a href="mailto:[business_email]">[business_email]</a></span></li><li><span class="contact-icon"><i class="fas fa-phone"></i></span><span class="contact-text"><a href="tel:[business_phone]">[business_phone]</a></span></li><li><a href="/"><span class="contact-icon"><i class="fas fa-map-marker-alt"></i></span><span class="contact-text">[business_address]</span></a></li></ul></div><div class="footer-col footer-col--extra"><h4 class="footer-heading">Explore</h4><p class="footer-extra-text">Dive into a world where science meets storytelling. Join the community of lifelong learners.</p><div class="footer-accent-line"></div><p class="footer-extra-label">חינוך · מדע · תוכן דיגיטלי</p></div></div><div class="footer-bottom"><div class="footer-bottom-left"><span class="footer-copyright">© 2026 Daria. All rights reserved.</span></div><div class="footer-bottom-right"><nav class="footer-legal"><a href="/privacy">Privacy Policy</a><span class="footer-sep">·</span><a href="/terms">Terms &amp; Conditions</a><span class="footer-sep">·</span><a href="/accessibility">Accessibility</a></nav><a href="https://zappy5.com" target="_blank" class="zappy-attribution">Generated by Zappy</a></div></div></div><div class="footer-waveform" aria-hidden="true"><svg viewBox="0 0 1200 60" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg"><polyline points="0,40 30,28 60,38 90,20 120,35 150,15 180,32 210,22 240,38 270,18 300,34 330,24 360,40 390,16 420,30 450,20 480,36 510,14 540,32 570,22 600,38 630,18 660,34 690,24 720,40 750,16 780,30 810,20 840,36 870,14 900,32 930,22 960,38 990,18 1020,34 1050,24 1080,40 1110,16 1140,30 1170,20 1200,36" fill="none" stroke="rgba(243,169,59,0.18)" stroke-width="1.5"></polyline><polyline points="0,50 40,38 80,48 120,30 160,45 200,25 240,42 280,32 320,50 360,26 400,44 440,34 480,50 520,24 560,42 600,30 640,48 680,26 720,44 760,34 800,50 840,24 880,42 920,30 960,48 1000,26 1040,44 1080,34 1120,50 1160,24 1200,42" fill="none" stroke="rgba(123,63,228,0.12)" stroke-width="1"></polyline></svg></div></footer>
+  
+  
+  
+  <div data-integration="accessibility:toolbar"></div>
+
+    <script src="/script.js"></script>
+
+    <script id="zappy-mobile-submenu-script">
+    (function() {
+      function initMobileSubmenuToggles() {
+        if (window.innerWidth > 768) {
+          document.querySelectorAll('.mobile-submenu-toggle').forEach(function(btn) { btn.remove(); });
+          document.querySelectorAll('.sub-menu.mobile-expanded').forEach(function(menu) { menu.classList.remove('mobile-expanded'); });
+          return;
+        }
+        var items = document.querySelectorAll('.nav-menu li:has(.sub-menu), nav li:has(.sub-menu), .navbar li:has(.sub-menu), #navMenu li:has(.sub-menu)');
+        items.forEach(function(li) {
+          if (li.querySelector('.mobile-submenu-toggle')) return;
+          var submenu = li.querySelector('.sub-menu');
+          var parentLink = li.querySelector(':scope > a');
+          if (!submenu || !parentLink) return;
+          var toggleBtn = document.createElement('button');
+          toggleBtn.className = 'mobile-submenu-toggle';
+          toggleBtn.setAttribute('aria-label', 'Toggle submenu');
+          toggleBtn.setAttribute('type', 'button');
+          parentLink.insertAdjacentElement('afterend', toggleBtn);
+          toggleBtn.addEventListener('click', function(e) {
+            e.preventDefault(); e.stopPropagation();
+            document.querySelectorAll('.sub-menu.mobile-expanded').forEach(function(menu) {
+              if (menu !== submenu) { menu.classList.remove('mobile-expanded'); var t = menu.parentElement.querySelector('.mobile-submenu-toggle'); if(t) t.classList.remove('expanded'); }
+            });
+            submenu.classList.toggle('mobile-expanded');
+            toggleBtn.classList.toggle('expanded');
+          });
+        });
+      }
+      if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', initMobileSubmenuToggles); }
+      else { initMobileSubmenuToggles(); }
+      var resizeTimer; window.addEventListener('resize', function() { clearTimeout(resizeTimer); resizeTimer = setTimeout(initMobileSubmenuToggles, 250); });
+      // Re-initialize when mobile menu becomes visible (MutationObserver)
+      var observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+          if (mutation.type === 'attributes') {
+            var target = mutation.target;
+            if (target.classList && (target.classList.contains('active') || target.classList.contains('open'))) {
+              setTimeout(initMobileSubmenuToggles, 100);
+            }
+          }
+        });
+      });
+      setTimeout(function() {
+        document.querySelectorAll('.mobile-menu, .nav-menu, #navMenu, nav').forEach(function(menu) {
+          observer.observe(menu, { attributes: true, attributeFilter: ['class', 'style'] });
+        });
+      }, 500);
+    })();
+    </script>
+
+    <script id="zappy-navbar-scroll-effect">
+    (function(){
+      var nb=document.querySelector('nav.navbar,.navbar:not(.zappy-catalog-menu)');
+      var cm=document.querySelector('.zappy-catalog-menu,#zappy-catalog-menu');
+      if(!nb)return;
+      var fb='rgba(231,221,210,0.85)';
+      var th=60;
+      var rs=getComputedStyle(document.documentElement);
+      var td=rs.getPropertyValue('--text-dark').trim()||'#1a1a1a';
+      var tl=rs.getPropertyValue('--text-light').trim()||'#ffffff';
+      var st=true?td:tl;
+      nb.style.transition='background 0.3s ease,backdrop-filter 0.3s ease,-webkit-backdrop-filter 0.3s ease,box-shadow 0.3s ease';
+      if(cm)cm.style.transition='background 0.3s ease,backdrop-filter 0.3s ease,-webkit-backdrop-filter 0.3s ease';
+      var neSel='a,.navbar-brand,.navbar-brand a,.dropdown-toggle,.mobile-toggle,.phone-header-btn,.mobile-hamburger-btn,.mobile-close-btn,.mobile-submenu-toggle,.nav-link';
+      var skipCls=['cart-link','login-link','nav-search-toggle','search-toggle'];
+      function sTC(c,clr){var els=c.querySelectorAll(neSel);for(var i=0;i<els.length;i++){var sk=false;if(els[i].closest('.sub-menu')||els[i].closest('.dropdown-menu')){sk=true;}for(var j=0;j<skipCls.length;j++){if(els[i].classList.contains(skipCls[j])){sk=true;break;}}if(!sk)els[i].style.setProperty('color',clr,'important');}}
+      function cTC(c){var els=c.querySelectorAll(neSel);for(var i=0;i<els.length;i++){if(els[i].closest('.sub-menu')||els[i].closest('.dropdown-menu'))continue;els[i].style.removeProperty('color');}}
+      function applyScrolled(){
+        nb.classList.add('scrolled');
+        if(window.innerWidth>768){
+          nb.style.setProperty('--frosted-text',st);
+          nb.style.setProperty('background-image','none','important');
+          nb.style.setProperty('background-color',fb,'important');
+          nb.style.backdropFilter='blur(12px)';nb.style.webkitBackdropFilter='blur(12px)';nb.style.boxShadow='0 2px 16px rgba(0,0,0,0.12)';
+          sTC(nb,st);
+        }
+        if(cm){cm.classList.add('scrolled');if(window.innerWidth>768){cm.style.setProperty('background',fb,'important');cm.style.setProperty('backdrop-filter','blur(12px)','important');cm.style.setProperty('-webkit-backdrop-filter','blur(12px)','important');sTC(cm,st);}}
+      }
+      function onS(){
+        if(window._zappyNavNoDarkHero) return;
+        if(window.innerWidth<=768){nb.classList.remove('scrolled');cTC(nb);if(cm){cm.classList.remove('scrolled');cTC(cm);}return;}
+        var y=window.scrollY||window.pageYOffset;
+        if(y>th){
+          nb.classList.add('scrolled');nb.style.setProperty('background-color',fb,'important');nb.style.setProperty('background-image','none','important');
+          nb.style.setProperty('--frosted-text',st);nb.style.backdropFilter='blur(12px)';nb.style.webkitBackdropFilter='blur(12px)';nb.style.boxShadow='0 2px 16px rgba(0,0,0,0.12)';
+          sTC(nb,st);
+          if(cm){cm.classList.add('scrolled');cm.style.setProperty('background',fb,'important');cm.style.setProperty('backdrop-filter','blur(12px)','important');cm.style.setProperty('-webkit-backdrop-filter','blur(12px)','important');sTC(cm,st);}
+        }else{
+          nb.classList.remove('scrolled');nb.style.setProperty('background-color','transparent','important');nb.style.removeProperty('background-image');
+          nb.style.removeProperty('--frosted-text');nb.style.backdropFilter='none';nb.style.webkitBackdropFilter='none';nb.style.boxShadow='none';
+          cTC(nb);
+          if(cm){cm.classList.remove('scrolled');cm.style.setProperty('background','transparent','important');cm.style.setProperty('backdrop-filter','none','important');cm.style.setProperty('-webkit-backdrop-filter','none','important');cTC(cm);}
+        }
+      }
+      function sLum(rv,gv,bv){rv/=255;gv/=255;bv/=255;rv=rv<=0.03928?rv/12.92:Math.pow((rv+0.055)/1.055,2.4);gv=gv<=0.03928?gv/12.92:Math.pow((gv+0.055)/1.055,2.4);bv=bv<=0.03928?bv/12.92:Math.pow((bv+0.055)/1.055,2.4);return 0.2126*rv+0.7152*gv+0.0722*bv;}
+      window.addEventListener('scroll',onS,{passive:true});
+      window.addEventListener('resize',onS,{passive:true});
+      onS();
+      var heroEl=document.querySelector('section[class*="hero"],[data-hero-type],main>section:first-child');
+      var hasDH=false;
+      if(heroEl){var hCs=getComputedStyle(heroEl);var hBI=hCs.backgroundImage;if(hBI&&hBI!=='none'){if(hBI.indexOf('url(')!==-1){var hM2=hCs.backgroundColor.match(/\d+/g);if(hM2&&hM2.length>=3){hasDH=sLum(parseInt(hM2[0]),parseInt(hM2[1]),parseInt(hM2[2]))<0.4;}else{hasDH=true;}}else if(hBI.indexOf('gradient')!==-1){var cM=hBI.match(/rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/g);if(cM&&cM.length>0){var tLm=0;for(var ci=0;ci<cM.length;ci++){var pts=cM[ci].match(/\d+/g);tLm+=sLum(parseInt(pts[0]),parseInt(pts[1]),parseInt(pts[2]));}hasDH=(tLm/cM.length)<0.4;}else{hasDH=true;}}else{hasDH=true;}}else{var hM=hCs.backgroundColor.match(/\d+/g);if(hM&&hM.length>=3){hasDH=sLum(parseInt(hM[0]),parseInt(hM[1]),parseInt(hM[2]))<0.4;}}}
+      if(!hasDH){window.removeEventListener('scroll',onS);window.removeEventListener('resize',onS);applyScrolled();window._zappyNavNoDarkHero=true;}
+    })();
+    </script>
+</body>
+</html>

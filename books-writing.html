@@ -1,0 +1,1437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="index, follow">
+    <title>Read What Science Feels Like — Daria</title>
+    <meta name="description" content="Daria&#39;s books bridge the gap between rigorous science and literary beauty. Dive into writing that challenges your thinking and sparks curiosity on every single page.">
+    <meta name="keywords" content="arts n crass daria, paramount plus daria, science books, popular science writing">
+    
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="48x48" href="/assets/favicon-48x48.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/assets/favicon-512x512.png">
+    <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+    <!-- Zappy Analytics -->
+<script>
+(function() {
+  'use strict';
+  
+  // Configuration
+  var config = {
+    websiteId: '939f442d-05e8-47ca-9396-41f999469bd4',
+    apiUrl: 'https://api.zappy5.com/api/analytics/track',
+    sessionDuration: 30 * 60 * 1000, // 30 minutes
+    visitorDuration: 30 * 24 * 60 * 60 * 1000, // 30 days
+    trackPageViews: true,
+    trackClicks: true,
+    trackFormSubmissions: true
+  };
+  
+  // Generate or retrieve persistent visitor ID (30 days)
+  function getVisitorId() {
+    var visitorKey = 'zappy_visitor_' + config.websiteId;
+    var visitor = null;
+    
+    try {
+      visitor = localStorage.getItem(visitorKey);
+      if (visitor) {
+        var visitorData = JSON.parse(visitor);
+        var now = Date.now();
+        
+        // Check if visitor ID is still valid (30 days)
+        if (now - visitorData.created < config.visitorDuration) {
+          // Update last seen timestamp
+          visitorData.lastSeen = now;
+          localStorage.setItem(visitorKey, JSON.stringify(visitorData));
+          return visitorData.id;
+        }
+      }
+    } catch (e) {
+      console.warn('Zappy Analytics: LocalStorage not available');
+    }
+    
+    // Generate new visitor ID
+    var newVisitorId = 'zv_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    
+    try {
+      localStorage.setItem(visitorKey, JSON.stringify({
+        id: newVisitorId,
+        created: Date.now(),
+        lastSeen: Date.now()
+      }));
+    } catch (e) {
+      // Continue without local storage
+    }
+    
+    return newVisitorId;
+  }
+  
+  // Generate or retrieve session ID (30 minutes)
+  function getSessionId() {
+    var sessionKey = 'zappy_session_' + config.websiteId;
+    var session = null;
+    
+    try {
+      session = sessionStorage.getItem(sessionKey);
+      if (session) {
+        var sessionData = JSON.parse(session);
+        var now = Date.now();
+        
+        // Check if session is still valid
+        if (now - sessionData.timestamp < config.sessionDuration) {
+          // Update timestamp
+          sessionData.timestamp = now;
+          sessionStorage.setItem(sessionKey, JSON.stringify(sessionData));
+          return sessionData.id;
+        }
+      }
+    } catch (e) {
+      console.warn('Zappy Analytics: SessionStorage not available');
+    }
+    
+    // Generate new session ID
+    var newSessionId = 'zs_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    
+    try {
+      sessionStorage.setItem(sessionKey, JSON.stringify({
+        id: newSessionId,
+        timestamp: Date.now()
+      }));
+    } catch (e) {
+      // Continue without session storage
+    }
+    
+    return newSessionId;
+  }
+  
+  var visitorId = getVisitorId();
+  var sessionId = getSessionId();
+  
+  // Track an event
+  function trackEvent(eventType, data) {
+    data = data || {};
+    
+    var eventData = {
+      website_id: config.websiteId,
+      event_type: eventType,
+      page_path: window.location.pathname,
+      referrer: document.referrer || 'direct',
+      visitor_id: visitorId,
+      session_id: sessionId,
+      metadata: data
+    };
+    
+    // Use sendBeacon if available (better for page unload events)
+    if (navigator.sendBeacon) {
+      var blob = new Blob([JSON.stringify(eventData)], { type: 'application/json' });
+      navigator.sendBeacon(config.apiUrl, blob);
+    } else {
+      // Fallback to fetch
+      fetch(config.apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(eventData),
+        keepalive: true
+      }).catch(function(error) {
+        console.warn('Zappy Analytics: Failed to track event', error);
+      });
+    }
+  }
+  
+  // Track page view
+  if (config.trackPageViews) {
+    trackEvent('pageview', {
+      title: document.title,
+      url: window.location.href
+    });
+  }
+  
+  // Track clicks on important elements
+  if (config.trackClicks) {
+    document.addEventListener('click', function(e) {
+      var target = e.target;
+      
+      // Track button clicks (counted as actions)
+      if (target.tagName === 'BUTTON' || target.closest('button')) {
+        var button = target.tagName === 'BUTTON' ? target : target.closest('button');
+        trackEvent('click', {
+          element: 'button',
+          text: button.textContent.trim().substring(0, 100),
+          id: button.id || null,
+          class: button.className || null
+        });
+      }
+      
+      // Track link clicks (navigation - not counted as actions)
+      else if (target.tagName === 'A' || target.closest('a')) {
+        var link = target.tagName === 'A' ? target : target.closest('a');
+        trackEvent('navigation', {
+          element: 'link',
+          text: link.textContent.trim().substring(0, 100),
+          href: link.href,
+          external: link.hostname !== window.location.hostname
+        });
+      }
+    }, true);
+  }
+  
+  // Track form submissions
+  if (config.trackFormSubmissions) {
+    document.addEventListener('submit', function(e) {
+      var form = e.target;
+      
+      trackEvent('form_submit', {
+        form_id: form.id || null,
+        form_name: form.name || null,
+        form_action: form.action || null,
+        form_method: form.method || 'GET'
+      });
+    }, true);
+  }
+  
+  // Track time on page (send on page unload)
+  var pageLoadTime = Date.now();
+  
+  window.addEventListener('beforeunload', function() {
+    var timeOnPage = Math.floor((Date.now() - pageLoadTime) / 1000); // in seconds
+    
+    trackEvent('page_unload', {
+      time_on_page: timeOnPage,
+      page_path: window.location.pathname
+    });
+  });
+  
+  // Expose tracking function globally for custom events
+  window.zappyAnalytics = {
+    track: trackEvent,
+    getVisitorId: function() { return visitorId; },
+    getSessionId: function() { return sessionId; }
+  };
+  
+})();
+</script>
+<!-- End Zappy Analytics -->
+    <meta property="og:title" content="Read What Science Feels Like — Daria">
+    <meta property="og:description" content="Daria&#39;s books bridge the gap between rigorous science and literary beauty. Dive into writing that challenges your thinking and sparks curiosity on every single page.">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Read What Science Feels Like — Daria">
+    <meta name="twitter:description" content="Daria&#39;s books bridge the gap between rigorous science and literary beauty. Dive into writing that challenges your thinking and sparks curiosity on every single page.">
+    <meta property="og:type" content="website">
+  <meta property="og:locale" content="en_US">
+  
+  
+  
+  
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+
+
+  
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="48x48" href="/assets/favicon-48x48.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/assets/favicon-512x512.png">
+    <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+    <!-- Cookie Consent -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vanilla-cookieconsent@3/dist/cookieconsent.css" />
+    <script src="https://cdn.jsdelivr.net/npm/vanilla-cookieconsent@3/dist/cookieconsent.umd.js"></script>
+    <!-- Mickidum Accessibility Toolbar -->
+    <script src="https://cdn.jsdelivr.net/gh/mickidum/acc_toolbar/acctoolbar/acctoolbar.min.js"></script>
+    <link rel="stylesheet" href="/styles.css">
+
+    <style id="zappy-dropdown-submenu-styles">
+      /* ========== DESKTOP DROPDOWN SUBMENU STYLES ========== */
+      /* Base styles for dropdown submenus - parent must be positioned */
+      .nav-menu li:has(.sub-menu), nav li:has(.sub-menu), .navbar li:has(.sub-menu), #navMenu li:has(.sub-menu) { position: relative; }
+      /* Submenu base - hidden by default */
+      .nav-menu .sub-menu, nav .sub-menu, .navbar .sub-menu, #navMenu .sub-menu { display: block !important; position: absolute !important; top: 100%; left: 0; min-width: 220px; background: white; border-radius: 8px; box-shadow: 0 8px 25px rgba(0,0,0,0.15); padding: 8px 0; opacity: 0; visibility: hidden; transform: translateY(10px); transition: all 0.3s ease; z-index: 1000; list-style: none; pointer-events: none; }
+      /* CRITICAL: Desktop hover styles to show dropdown */
+      .nav-menu li:hover > .sub-menu, nav li:hover > .sub-menu, .navbar li:hover > .sub-menu, #navMenu li:hover > .sub-menu { opacity: 1 !important; visibility: visible !important; transform: translateY(0) !important; pointer-events: auto !important; }
+      /* Submenu item styling */
+      .sub-menu li { list-style: none; margin: 0; padding: 0; }
+      .sub-menu a { display: block !important; padding: 10px 16px !important; color: var(--text-dark, #333) !important; font-weight: 500; text-decoration: none; white-space: nowrap; transition: background-color 0.2s; }
+      .sub-menu .zappy-nav-child > a { padding-left: 28px !important; font-size: 0.9em !important; opacity: 0.85 !important; }
+      [dir="rtl"] .sub-menu .zappy-nav-child > a, html[lang="he"] .sub-menu .zappy-nav-child > a, html[lang="ar"] .sub-menu .zappy-nav-child > a { padding-left: 10px !important; padding-right: 28px !important; }
+      .sub-menu .zappy-nav-parent > a { font-weight: 600 !important; }
+      .sub-menu a:hover { background-color: #f5f5f5; }
+      /* RTL (Hebrew/Arabic) dropdown positioning */
+      [dir="rtl"] .nav-menu .sub-menu, [dir="rtl"] nav .sub-menu, [dir="rtl"] .navbar .sub-menu, html[lang="he"] .nav-menu .sub-menu, html[lang="he"] nav .sub-menu, html[lang="he"] .navbar .sub-menu, html[lang="ar"] .nav-menu .sub-menu, html[lang="ar"] nav .sub-menu, html[lang="ar"] .navbar .sub-menu { left: auto !important; right: 0 !important; }
+      /* Hide empty dropdown menus (exclude catalog sub-menus that use <a> children instead of <li>) */
+      .sub-menu:empty, .sub-menu:not(:has(li:not(.zappy-hidden-menu-item))):not(:has(> a)), .sub-menu:not(:has(li)):not(:has(> a)) { display: none !important; opacity: 0 !important; visibility: hidden !important; pointer-events: none !important; }
+      /* Desktop: show submenu on Menu Group hover */
+      li:has(.menu-group-title):hover > .sub-menu { opacity: 1 !important; visibility: visible !important; transform: translateY(0) !important; pointer-events: auto !important; }
+      /* Menu Group title styling */
+      .nav-menu > li > .menu-group-title, #navMenu > li > .menu-group-title { display: inline-block; padding: 0.5rem 1rem; cursor: default; user-select: none; }
+      
+      /* ========== MOBILE SUBMENU STYLES ========== */
+      @media (max-width: 768px) {
+        .nav-menu .sub-menu, nav .sub-menu, .navbar .sub-menu, #navMenu .sub-menu { position: static !important; transform: none !important; box-shadow: none !important; background: transparent !important; max-height: 0; overflow: hidden; opacity: 0; visibility: hidden; transition: max-height 0.3s ease, opacity 0.3s ease; padding: 0 !important; border-radius: 0 !important; }
+        .navbar .sub-menu.mobile-expanded, .nav-menu .sub-menu.mobile-expanded, #navMenu .sub-menu.mobile-expanded { max-height: none !important; overflow-y: visible !important; opacity: 1 !important; visibility: visible !important; padding: 8px 0 8px 16px !important; }
+        [dir="rtl"] .sub-menu.mobile-expanded, html[lang="he"] .sub-menu.mobile-expanded { padding: 8px 16px 8px 0 !important; }
+        /* Disable hover behavior on mobile */
+        .nav-menu li:hover > .sub-menu, nav li:hover > .sub-menu, .navbar li:hover > .sub-menu, #navMenu li:hover > .sub-menu { opacity: 0; visibility: hidden; pointer-events: none; }
+        .nav-menu li > .sub-menu.mobile-expanded, nav li > .sub-menu.mobile-expanded, .navbar li > .sub-menu.mobile-expanded, #navMenu li > .sub-menu.mobile-expanded { opacity: 1 !important; visibility: visible !important; pointer-events: auto !important; }
+        .nav-menu li:has(.sub-menu), nav li:has(.sub-menu), .navbar li:has(.sub-menu), #navMenu li:has(.sub-menu) { display: flex !important; flex-wrap: wrap !important; align-items: center !important; position: relative !important; min-height: 44px !important; }
+        .nav-menu li:has(.sub-menu) > a, nav li:has(.sub-menu) > a, .navbar li:has(.sub-menu) > a, #navMenu li:has(.sub-menu) > a { flex: 1 !important; min-width: 0 !important; }
+        .nav-menu li:has(.sub-menu) > .menu-group-title, nav li:has(.sub-menu) > .menu-group-title, .navbar li:has(.sub-menu) > .menu-group-title, #navMenu li:has(.sub-menu) > .menu-group-title { flex: 1 !important; min-width: 0 !important; padding: 0 !important; line-height: inherit !important; }
+        .nav-menu li:has(.sub-menu) > .sub-menu, nav li:has(.sub-menu) > .sub-menu, .navbar li:has(.sub-menu) > .sub-menu, #navMenu li:has(.sub-menu) > .sub-menu { flex-basis: 100% !important; width: 100% !important; }
+        .nav-menu li:has(.sub-menu) > a [class*="chevron"], .nav-menu li:has(.sub-menu) > a [class*="arrow"], .nav-menu li:has(.sub-menu) > a .fa-chevron-down, .nav-menu li:has(.sub-menu) > a .fa-angle-down, nav li:has(.sub-menu) > a [class*="chevron"], nav li:has(.sub-menu) > a [class*="arrow"], #navMenu li:has(.sub-menu) > a [class*="chevron"], #navMenu li:has(.sub-menu) > a [class*="arrow"] { display: none !important; visibility: hidden !important; }
+        .mobile-submenu-toggle { display: flex !important; align-items: center !important; justify-content: center !important; width: 44px !important; height: auto !important; background: transparent !important; border: none !important; cursor: pointer !important; color: var(--text-light) !important; position: static !important; flex-shrink: 0 !important; align-self: stretch !important; z-index: 2 !important; padding: 0 !important; margin: 0 !important; }
+        .mobile-submenu-toggle::after { content: '' !important; width: 0 !important; height: 0 !important; border-left: 6px solid transparent !important; border-right: 6px solid transparent !important; border-top: 7px solid currentColor !important; transition: transform 0.3s ease !important; }
+        .mobile-submenu-toggle.expanded::after { transform: rotate(180deg) !important; }
+        .sub-menu a { padding: 10px 0 !important; display: block !important; color: var(--text-light) !important; white-space: normal !important; }
+        .sub-menu .zappy-nav-child > a { padding-left: 28px !important; font-size: 0.9em !important; opacity: 0.85 !important; }
+        [dir="rtl"] .sub-menu .zappy-nav-child > a, html[lang="he"] .sub-menu .zappy-nav-child > a, html[lang="ar"] .sub-menu .zappy-nav-child > a { padding-left: 0 !important; padding-right: 28px !important; }
+        .sub-menu .zappy-nav-parent > a { font-weight: 600 !important; }
+        .nav-menu.active, #navMenu.active { max-width: 100vw !important; overflow-x: hidden !important; box-sizing: border-box !important; }
+        .navbar .sub-menu li a, nav.navbar .sub-menu li a, .zappy-products-dropdown .sub-menu a { color: var(--text-light) !important; }
+      }
+      @media (min-width: 769px) { .mobile-submenu-toggle { display: none !important; } }
+    </style>
+
+    <style id="zappy-widget-visibility">
+      html[dir="rtl"] .whatsapp-float { right: 20px !important; left: auto !important; }
+      html[dir="ltr"] .whatsapp-float, html:not([dir]) .whatsapp-float { left: 20px !important; right: auto !important; }
+      html[dir="rtl"] #mic-access-tool-general-button, html[dir="rtl"] .mic-access-tool-general-button,
+      html[dir="rtl"] #mic-init-access-tool .mic-access-tool-general-button,
+      html[dir="rtl"] #mic-init-access-tool #mic-access-tool-general-button,
+      html[dir="rtl"] ._access-icon { left: 20px !important; right: auto !important; }
+      html[dir="ltr"] #mic-access-tool-general-button, html[dir="ltr"] .mic-access-tool-general-button,
+      html[dir="ltr"] #mic-init-access-tool .mic-access-tool-general-button,
+      html[dir="ltr"] #mic-init-access-tool #mic-access-tool-general-button,
+      html[dir="ltr"] ._access-icon,
+      html:not([dir]) #mic-access-tool-general-button, html:not([dir]) .mic-access-tool-general-button,
+      html:not([dir]) #mic-init-access-tool .mic-access-tool-general-button,
+      html:not([dir]) #mic-init-access-tool #mic-access-tool-general-button,
+      html:not([dir]) ._access-icon { right: 20px !important; left: auto !important; }
+      @media (max-width: 768px) { .whatsapp-float { display: flex !important; } }
+      @media (min-width: 769px) { .whatsapp-float { display: flex !important; } }
+      @media (max-width: 768px) {
+        #mic-access-tool-general-button, .mic-access-tool-general-button,
+        #mic-init-access-tool .mic-access-tool-general-button, #mic-init-access-tool #mic-access-tool-general-button,
+        ._access-icon { display: flex !important; visibility: visible !important; opacity: 1 !important; pointer-events: auto !important; }
+        #mic-access-tool-box.opened-mic-access-tool, .mic-access-tool-box.opened-mic-access-tool,
+        #mic-init-access-tool #mic-access-tool-box.opened-mic-access-tool {
+          visibility: visible !important; opacity: 1 !important; pointer-events: auto !important;
+        }
+      }
+      @media (min-width: 769px) {
+        #mic-access-tool-general-button, .mic-access-tool-general-button,
+        #mic-init-access-tool .mic-access-tool-general-button, #mic-init-access-tool #mic-access-tool-general-button,
+        ._access-icon { display: flex !important; visibility: visible !important; opacity: 1 !important; pointer-events: auto !important; }
+        #mic-access-tool-box.opened-mic-access-tool, .mic-access-tool-box.opened-mic-access-tool,
+        #mic-init-access-tool #mic-access-tool-box.opened-mic-access-tool {
+          visibility: visible !important; opacity: 1 !important; pointer-events: auto !important;
+        }
+      }
+    </style>
+</head>
+<body>
+<nav class="navbar">
+  <button class="mobile-toggle" id="mobileToggle" aria-label="Menu">
+    <svg class="hamburger-icon" width="24" height="24" viewBox="0 0 24 24" fill="none">
+      <path d="M3 12h18M3 6h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+    </svg>
+    <svg class="close-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" style="display: none;">
+      <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+    </svg>
+  </button>
+
+  <button class="phone-header-btn" data-phone="[business_phone]" aria-label="Call">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+    </svg>
+  </button>
+
+  <div class="nav-container">
+    <div class="nav-brand">
+      <a href="/" class="logo-link"><img class="logo" src="/assets/site-books---writing-image-1.webp" alt="Daria"></a>
+    </div>
+
+    <ul class="nav-menu" id="navMenu"><li><a href="/">Home</a></li><li><a href="/about">About</a></li><li><a href="/books-writing">Books &amp; Writing</a></li><li><a href="/speaking">Speaking</a></li><li><a href="/podcast">Podcast</a></li></ul>
+
+    <div class="nav-cta-container">
+      <a href="/contact" class="nav-cta-btn">Contact</a>
+    </div>
+  </div>
+</nav>
+<script>
+
+// Navbar Mobile Menu Toggle and Contrast Fix
+(function() {
+  // Use 'load' event instead of 'DOMContentLoaded' to ensure we run AFTER all other scripts
+  window.addEventListener('load', function() {
+    
+    // FIX MOBILE BUTTON CONTRAST
+    // Detect navbar background color and apply contrasting color to mobile buttons
+    const navbar = document.querySelector('.navbar, nav, header');
+    if (!navbar) {
+      console.log('[Navbar] Navbar element not found');
+      return;
+    }
+    
+    // DECLARE VARIABLES EARLY to avoid Temporal Dead Zone errors
+    // These are used in multiple places below
+    let mobileToggle = document.getElementById('mobileToggle') ||
+                       document.querySelector('.mobile-toggle') ||
+                       document.querySelector('.hamburger') ||
+                       document.querySelector('.hamburger-menu') ||
+                       document.querySelector('.menu-toggle') ||
+                       document.querySelector('.burger-menu') ||
+                       document.querySelector('[aria-label="Menu"]') ||
+                       document.querySelector('[aria-label="תפריט"]');
+    
+    const phoneBtn = document.querySelector('.phone-header-btn');
+    
+    const computedStyle = window.getComputedStyle(navbar);
+    let bgColor = computedStyle.backgroundColor;
+    
+    console.log('[Navbar] Initial navbar background:', bgColor);
+    
+    // Check if background is transparent or rgba with 0 alpha
+    const isTransparent = bgColor === 'transparent' || 
+                         bgColor === 'rgba(0, 0, 0, 0)' ||
+                         (bgColor.startsWith('rgba') && bgColor.includes(', 0)'));
+    
+    if (isTransparent) {
+      // Check for background-image or gradient
+      const bgImage = computedStyle.backgroundImage;
+      if (bgImage && bgImage !== 'none') {
+        console.log('[Navbar] Navbar has background image/gradient, using dark text');
+        bgColor = 'rgb(240, 240, 240)'; // Assume light background
+      } else {
+        // Transparent navbar - check body background
+        const bodyBg = window.getComputedStyle(document.body).backgroundColor;
+        console.log('[Navbar] Navbar transparent, using body background:', bodyBg);
+        bgColor = bodyBg;
+      }
+    }
+    
+    // Calculate luminance to determine if background is light or dark
+    const rgb = bgColor.match(/\d+/g);
+    if (rgb && rgb.length >= 3) {
+      const r = parseInt(rgb[0]);
+      const g = parseInt(rgb[1]);
+      const b = parseInt(rgb[2]);
+      const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+      
+      // Mobile button colors are set by Claude's AI-generated CSS (same as .nav-menu a)
+      // No dynamic color overrides needed - colors come from the generated navbar CSS
+      console.log('[Navbar] Mobile button colors preserved from Claude CSS (luminance:', luminance.toFixed(2) + ')');
+      
+      // FIX ICON SIZES - Ensure SVGs are properly sized and visible
+      // INJECT CRITICAL CSS TO OVERRIDE ANY CONFLICTING RULES
+      const criticalCSS = document.createElement('style');
+      criticalCSS.id = 'zappy-mobile-nav-fix';
+      const htmlLang = document.documentElement.lang || 'en';
+      const htmlDir = document.documentElement.dir || 'ltr';
+      // Check both dir attribute AND lang for RTL detection
+      // dir="rtl" is the most reliable indicator
+      const isRTL = htmlDir === 'rtl' || htmlLang === 'he' || htmlLang === 'ar';
+      
+      criticalCSS.textContent = `
+        /* Hide mobile buttons on desktop, show only on mobile */
+        @media (min-width: 769px) {
+          .mobile-toggle,
+          .phone-header-btn {
+            display: none !important;
+          }
+        }
+        
+        /* Show and position mobile buttons correctly on mobile */
+        @media (max-width: 768px) {
+          .mobile-toggle,
+          .phone-header-btn {
+            position: absolute !important;
+            top: 0 !important;
+            bottom: 0 !important;
+            margin-top: auto !important;
+            margin-bottom: auto !important;
+            z-index: 1001 !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            width: 36px !important;
+            height: 36px !important;
+            border-radius: 50% !important;
+            border: none !important;
+            cursor: pointer !important;
+            padding: 6px !important;
+            background: none !important;
+            color: var(--nav-text, var(--text-light)) !important;
+            touch-action: manipulation !important;
+            -webkit-tap-highlight-color: transparent !important;
+          }
+          
+          /* LTR positioning (default): hamburger LEFT, phone RIGHT */
+          html:not([dir="rtl"]):not([lang="he"]):not([lang="ar"]) .mobile-toggle,
+          html[dir="ltr"] .mobile-toggle {
+            left: 12px !important;
+            right: auto !important;
+          }
+          html:not([dir="rtl"]):not([lang="he"]):not([lang="ar"]) .phone-header-btn,
+          html[dir="ltr"] .phone-header-btn {
+            right: 12px !important;
+            left: auto !important;
+          }
+          
+          /* RTL positioning: hamburger RIGHT, phone LEFT */
+          html[dir="rtl"] .mobile-toggle,
+          html[lang="he"] .mobile-toggle,
+          html[lang="ar"] .mobile-toggle {
+            right: 12px !important;
+            left: auto !important;
+          }
+          html[dir="rtl"] .phone-header-btn,
+          html[lang="he"] .phone-header-btn,
+          html[lang="ar"] .phone-header-btn {
+            left: 12px !important;
+            right: auto !important;
+          }
+          
+          /* CRITICAL: Ensure nav-container has min-height on mobile */
+          /* All children are positioned absolutely/fixed on mobile, so height:auto collapses to 0 */
+          .nav-container {
+            min-height: 70px !important;
+            position: relative !important;
+          }
+          
+          /* Ensure SVG icons are properly sized and inherit color */
+          .mobile-toggle svg,
+          .phone-header-btn svg {
+            width: 24px !important;
+            height: 24px !important;
+            /* Don't force display - let JavaScript control hamburger/close toggle */
+          }
+          
+          /* Reset nav-cta-container on mobile - remove desktop box-shadow/padding */
+          /* that creates a visible ghost box when CTA button is hidden */
+          .nav-cta-container {
+            box-shadow: none !important;
+            padding: 0 !important;
+          }
+          
+          /* Hide nav-cta-container entirely on mobile when there's no lang-switcher */
+          /* (only the CTA button is inside, and it's hidden on mobile) */
+          .nav-cta-container:not(:has(.lang-switcher)) {
+            display: none !important;
+          }
+          
+          /* CRITICAL: Prevent hero image fade gradient from bleeding over headline text */
+          /* The .image-fade-gradient has bottom: -30px (extends below parent) */
+          /* On mobile stacked layout, this overlaps the h1 text below the image */
+          .hero-image-column {
+            overflow: hidden !important;
+          }
+          .image-fade-gradient {
+            bottom: 0 !important;
+          }
+          
+          /* Hide desktop language switcher on mobile - hamburger menu handles it */
+          /* High specificity to override stored CSS */
+          .lang-switcher,
+          .nav-cta-container .lang-switcher,
+          .nav-container .lang-switcher,
+          .navbar .lang-switcher,
+          .navbar .nav-cta-container .lang-switcher {
+            display: none !important;
+          }
+        }
+      `;
+      
+      // Remove existing fix if present and inject new one
+      const existing = document.getElementById('zappy-mobile-nav-fix');
+      if (existing) existing.remove();
+      document.head.appendChild(criticalCSS);
+      
+      console.log('[Navbar] Critical CSS injected for mobile nav positioning');
+      
+      // ONLY apply inline positioning styles on mobile viewport
+      // On desktop, the CSS handles hiding these buttons with display: none
+      // Inline styles were breaking desktop layout by overriding CSS
+      const isMobileViewport = window.innerWidth <= 768;
+      
+      if (mobileToggle) {
+        // Icon sizing applies to all viewports for consistency
+        const hamburgerIcon = mobileToggle.querySelector('.hamburger-icon');
+        const closeIcon = mobileToggle.querySelector('.close-icon');
+        
+        if (hamburgerIcon) {
+          hamburgerIcon.style.setProperty('width', '24px', 'important');
+          hamburgerIcon.style.setProperty('height', '24px', 'important');
+          hamburgerIcon.style.setProperty('display', 'block', 'important'); // Show hamburger by default
+        }
+        if (closeIcon) {
+          closeIcon.style.setProperty('width', '24px', 'important');
+          closeIcon.style.setProperty('height', '24px', 'important');
+          closeIcon.style.setProperty('display', 'none', 'important'); // Hide close icon by default
+        }
+        
+        // ONLY set positioning inline styles on mobile
+        if (isMobileViewport) {
+          mobileToggle.style.setProperty('position', 'absolute', 'important');
+          mobileToggle.style.setProperty('top', '0', 'important');
+          mobileToggle.style.setProperty('bottom', '0', 'important');
+          mobileToggle.style.setProperty('margin-top', 'auto', 'important');
+          mobileToggle.style.setProperty('margin-bottom', 'auto', 'important');
+          mobileToggle.style.setProperty('z-index', '1001', 'important');
+          
+          // Clear any inline left/right so CSS can take over based on html[dir]
+          mobileToggle.style.removeProperty('left');
+          mobileToggle.style.removeProperty('right');
+          
+          console.log('[Navbar] Mobile toggle positioning applied (mobile viewport)');
+        } else {
+          // On desktop, clear any positioning styles to let CSS handle it
+          mobileToggle.style.removeProperty('position');
+          mobileToggle.style.removeProperty('top');
+          mobileToggle.style.removeProperty('transform');
+          mobileToggle.style.removeProperty('z-index');
+          mobileToggle.style.removeProperty('left');
+          mobileToggle.style.removeProperty('right');
+          console.log('[Navbar] Desktop viewport - cleared mobile toggle inline positioning');
+        }
+      }
+      
+      if (phoneBtn) {
+        // Icon sizing applies to all viewports
+        const phoneIcon = phoneBtn.querySelector('svg');
+        if (phoneIcon) {
+          phoneIcon.style.width = '24px';
+          phoneIcon.style.height = '24px';
+          phoneIcon.setAttribute('width', '24');
+          phoneIcon.setAttribute('height', '24');
+        }
+        
+        // ONLY set positioning inline styles on mobile
+        if (isMobileViewport) {
+          phoneBtn.style.setProperty('position', 'absolute', 'important');
+          phoneBtn.style.setProperty('top', '0', 'important');
+          phoneBtn.style.setProperty('bottom', '0', 'important');
+          phoneBtn.style.setProperty('margin-top', 'auto', 'important');
+          phoneBtn.style.setProperty('margin-bottom', 'auto', 'important');
+          phoneBtn.style.setProperty('z-index', '1001', 'important');
+          
+          // Clear any inline left/right so CSS can take over based on html[dir]
+          phoneBtn.style.removeProperty('left');
+          phoneBtn.style.removeProperty('right');
+          
+          console.log('[Navbar] Phone button positioning applied (mobile viewport)');
+        } else {
+          // On desktop, clear any positioning styles to let CSS handle it
+          phoneBtn.style.removeProperty('position');
+          phoneBtn.style.removeProperty('top');
+          phoneBtn.style.removeProperty('transform');
+          phoneBtn.style.removeProperty('z-index');
+          phoneBtn.style.removeProperty('left');
+          phoneBtn.style.removeProperty('right');
+          console.log('[Navbar] Desktop viewport - cleared phone button inline positioning');
+        }
+      }
+    } else {
+      console.log('[Navbar] Could not parse background color:', bgColor);
+    }
+    
+    // MOBILE MENU TOGGLE
+    // Re-query in case DOM changed (mobileToggle already declared at top of function)
+    mobileToggle = document.getElementById('mobileToggle') ||
+                   document.querySelector('.mobile-toggle') ||
+                   document.querySelector('.hamburger') ||
+                   document.querySelector('.hamburger-menu') ||
+                   document.querySelector('.menu-toggle') ||
+                   document.querySelector('.burger-menu') ||
+                   document.querySelector('[aria-label="Menu"]') ||
+                   document.querySelector('[aria-label="תפריט"]');
+    
+    // EXPANDED SEARCH: Find nav menu by ID or class
+    const navMenu = document.getElementById('navMenu') ||
+                  document.querySelector('.nav-menu') ||
+                  document.querySelector('.nav-links') ||
+                  document.querySelector('nav ul:not(.submenu)');
+    
+    if (!mobileToggle || !navMenu) {
+      console.log('[Navbar] Mobile toggle or menu not found:', { toggle: !!mobileToggle, menu: !!navMenu });
+      return;
+    }
+    
+    // Ensure navMenu has ID for CSS targeting
+    if (!navMenu.id) {
+      navMenu.id = 'navMenu';
+    }
+    
+    console.log('[Navbar] Initializing mobile menu...');
+    
+    // Remove any existing event listeners by cloning the button
+    const newToggle = mobileToggle.cloneNode(true);
+    mobileToggle.parentNode.replaceChild(newToggle, mobileToggle);
+    
+    // Toggle menu handler (shared by click and touchend)
+    function handleToggle(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      
+      const hamburgerIcon = newToggle.querySelector('.hamburger-icon');
+      const closeIcon = newToggle.querySelector('.close-icon');
+      const isActive = navMenu.classList.contains('active');
+      
+      if (isActive) {
+        // Close menu
+        navMenu.classList.remove('active');
+        if (hamburgerIcon) hamburgerIcon.style.setProperty('display', 'block', 'important');
+        if (closeIcon) closeIcon.style.setProperty('display', 'none', 'important');
+        document.body.style.overflow = '';
+        console.log('[Navbar] Menu closed');
+      } else {
+        // Open menu
+        navMenu.classList.add('active');
+        if (hamburgerIcon) hamburgerIcon.style.setProperty('display', 'none', 'important');
+        if (closeIcon) closeIcon.style.setProperty('display', 'block', 'important');
+        document.body.style.overflow = 'hidden';
+        console.log('[Navbar] Menu opened');
+      }
+    }
+    
+    // Use click for desktop/emulation and touchend as iOS Safari fallback.
+    // Prevent double-fire with a timestamp guard.
+    var lastToggleTime = 0;
+    function guardedToggle(e) {
+      var now = Date.now();
+      if (now - lastToggleTime < 300) return;
+      lastToggleTime = now;
+      handleToggle(e);
+    }
+    
+    newToggle.addEventListener('click', guardedToggle);
+    newToggle.addEventListener('touchend', guardedToggle);
+    
+    // Close menu when clicking nav links (but NOT dropdown toggles)
+    const navLinks = navMenu.querySelectorAll('a');
+    navLinks.forEach(function(link) {
+      link.addEventListener('click', function() {
+        // Don't close if it's a dropdown child (unless it's a real navigation link)
+        if (this.getAttribute('href') === '#') return;
+        
+        const hamburgerIcon = newToggle.querySelector('.hamburger-icon');
+        const closeIcon = newToggle.querySelector('.close-icon');
+        
+        navMenu.classList.remove('active');
+        if (hamburgerIcon) hamburgerIcon.style.setProperty('display', 'block', 'important');
+        if (closeIcon) closeIcon.style.setProperty('display', 'none', 'important');
+        document.body.style.overflow = '';
+        console.log('[Navbar] Menu closed (link clicked)');
+      });
+    });
+    
+    // DROPDOWN MENU TOGGLE (for mobile and touch devices)
+    var dropdownToggles = navMenu.querySelectorAll('.dropdown-toggle');
+    dropdownToggles.forEach(function(toggle) {
+      toggle.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var parent = this.closest('.nav-dropdown');
+        if (!parent) return;
+        
+        // Close other open dropdowns at the same level
+        var siblings = parent.parentNode.querySelectorAll('.nav-dropdown.open');
+        siblings.forEach(function(sib) {
+          if (sib !== parent) sib.classList.remove('open');
+        });
+        
+        parent.classList.toggle('open');
+        console.log('[Navbar] Dropdown toggled:', parent.classList.contains('open') ? 'open' : 'closed');
+      });
+    });
+    
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', function(e) {
+      if (!e.target.closest('.nav-dropdown')) {
+        var openDropdowns = document.querySelectorAll('.nav-dropdown.open');
+        openDropdowns.forEach(function(dd) { dd.classList.remove('open'); });
+      }
+    });
+    
+    console.log('[Navbar] Dropdown handlers initialized for ' + dropdownToggles.length + ' dropdowns');
+    
+    // Phone button functionality (phoneBtn already declared at top of function)
+    if (phoneBtn) {
+      phoneBtn.addEventListener('click', function() {
+        // Get phone number from placeholder in page or use default
+        const phoneLinks = document.querySelectorAll('a[href^="tel:"]');
+        const phoneNumber = phoneLinks.length > 0 
+          ? phoneLinks[0].getAttribute('href').replace('tel:', '')
+          : '[business_phone]';
+        
+        window.location.href = 'tel:' + phoneNumber;
+        console.log('[Navbar] Phone button clicked');
+      });
+    }
+    
+    console.log('[Navbar] Mobile menu initialized successfully');
+    
+    // WhatsApp button visibility is now controlled via CSS (siteSettings).
+    // No JS-based desktop hiding — the button is visible on both mobile and desktop by default.
+  });
+})();
+
+</script>
+  
+  <main>
+    <section class="books-writing-hero-section" data-layout-spec="Books &amp; Writing-hero" data-hero-type="fullscreen-scrim">
+
+  <!-- Decorative: sound wave lines (top-right) -->
+  <svg class="bwh-deco-wave" aria-hidden="true" data-no-icon-edit="true" viewBox="0 0 320 80" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+    <g fill="none" stroke="rgba(200,151,58,0.18)" stroke-width="1.5">
+      <line x1="0" y1="40" x2="320" y2="40"></line>
+      <line x1="10" y1="28" x2="10" y2="52"></line>
+      <line x1="22" y1="20" x2="22" y2="60"></line>
+      <line x1="34" y1="32" x2="34" y2="48"></line>
+      <line x1="46" y1="14" x2="46" y2="66"></line>
+      <line x1="58" y1="24" x2="58" y2="56"></line>
+      <line x1="70" y1="10" x2="70" y2="70"></line>
+      <line x1="82" y1="28" x2="82" y2="52"></line>
+      <line x1="94" y1="18" x2="94" y2="62"></line>
+      <line x1="106" y1="30" x2="106" y2="50"></line>
+      <line x1="118" y1="22" x2="118" y2="58"></line>
+      <line x1="130" y1="8" x2="130" y2="72"></line>
+      <line x1="142" y1="26" x2="142" y2="54"></line>
+      <line x1="154" y1="16" x2="154" y2="64"></line>
+      <line x1="166" y1="34" x2="166" y2="46"></line>
+      <line x1="178" y1="20" x2="178" y2="60"></line>
+      <line x1="190" y1="12" x2="190" y2="68"></line>
+      <line x1="202" y1="30" x2="202" y2="50"></line>
+      <line x1="214" y1="22" x2="214" y2="58"></line>
+      <line x1="226" y1="18" x2="226" y2="62"></line>
+      <line x1="238" y1="28" x2="238" y2="52"></line>
+      <line x1="250" y1="10" x2="250" y2="70"></line>
+      <line x1="262" y1="24" x2="262" y2="56"></line>
+      <line x1="274" y1="32" x2="274" y2="48"></line>
+      <line x1="286" y1="20" x2="286" y2="60"></line>
+      <line x1="298" y1="14" x2="298" y2="66"></line>
+      <line x1="310" y1="28" x2="310" y2="52"></line>
+    </g>
+  </svg>
+
+  <!-- Decorative: ink script texture -->
+  <svg class="bwh-deco-script" aria-hidden="true" data-no-icon-edit="true" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+    <g fill="none" stroke="rgba(139,125,107,0.07)" stroke-width="1">
+      <path d="M20,30 Q80,20 140,35 Q200,50 260,28 Q320,10 380,32"></path>
+      <path d="M10,60 Q70,48 130,62 Q190,78 250,55 Q310,38 390,60"></path>
+      <path d="M30,90 Q90,76 150,92 Q210,108 270,82 Q330,62 400,88"></path>
+      <path d="M5,120 Q65,106 125,122 Q185,138 245,112 Q305,92 385,118"></path>
+      <path d="M15,150 Q75,136 135,152 Q195,168 255,142 Q315,122 395,148"></path>
+      <path d="M25,180 Q85,166 145,182 Q205,198 265,172 Q325,152 400,178"></path>
+      <path d="M0,210 Q60,196 120,212 Q180,228 240,202 Q300,182 380,208"></path>
+      <path d="M20,240 Q80,226 140,242 Q200,258 260,232 Q320,212 390,238"></path>
+      <path d="M10,270 Q70,256 130,272 Q190,288 250,262 Q310,242 395,268"></path>
+    </g>
+  </svg>
+
+  <!-- Page intro: centered heading block -->
+  <div class="bwh-intro-container">
+    <div class="bwh-intro-inner">
+      <span class="bwh-label">Books &amp; Writing</span>
+      <div class="bwh-amber-rule" aria-hidden="true"></div>
+      <h1 class="bwh-headline">Where Equations<br>Become Stories</h1>
+      <h3 class="bwh-subtitle">Science distilled into language — essays, long-form narratives, and a debut book that invites readers into the hidden poetry of the physical world.</h3>
+    </div>
+  </div>
+
+  <!-- Featured book panel -->
+  <div class="bwh-book-panel">
+    <div class="bwh-panel-inner">
+
+      <!-- START: description column -->
+      <div class="bwh-book-description">
+        <span class="bwh-book-label">Featured Publication</span>
+        <h2 class="bwh-book-title">The Invisible Architecture</h2>
+        <div class="bwh-book-amber-rule" aria-hidden="true"></div>
+        <p class="bwh-book-synopsis">A physicist's journey through the laws that govern everything — from the curvature of spacetime to the rhythm of a sentence. <em>The Invisible Architecture</em> is part memoir, part scientific manifesto, and part love letter to the curious mind.</p>
+
+        <ul class="bwh-themes-list">
+          <li>
+            <span class="bwh-theme-dot" aria-hidden="true"></span>
+            <span>Quantum uncertainty &amp; human intuition</span>
+          </li>
+          <li>
+            <span class="bwh-theme-dot" aria-hidden="true"></span>
+            <span>The language of physics as literature</span>
+          </li>
+          <li>
+            <span class="bwh-theme-dot" aria-hidden="true"></span>
+            <span>Women at the frontier of science</span>
+          </li>
+          <li>
+            <span class="bwh-theme-dot" aria-hidden="true"></span>
+            <span>Bridging academia and the public imagination</span>
+          </li>
+        </ul>
+
+        <div class="bwh-cta-row">
+          <a href="/contact" class="bwh-btn-primary">
+            <i class="fa fa-envelope" aria-hidden="true"></i>
+            Contact for Events &amp; Interviews
+          </a>
+          <a href="/contact" class="bwh-btn-ghost">Speaking Inquiries →</a>
+        </div>
+
+        <p class="bwh-book-meta"><span class="bwh-meta-label">Genre:</span> Science Narrative &nbsp;•&nbsp; <span class="bwh-meta-label">Format:</span> Hardcover &amp; Digital &nbsp;•&nbsp; <span class="bwh-meta-label">PhD Physics</span></p>
+      </div>
+
+      <!-- END: book visual column -->
+      <div class="bwh-book-visual">
+        <div class="bwh-image-wrapper">
+          <img data-hero-bg="true" data-placeholder="books-writing-hero-image-1" data-context="Atmospheric editorial book cover photograph for a physicist-author named Daria. Moody, cinematic image showing an open antique book with handwritten physics equations and diagrams visible on its pages, resting on a dark wooden surface beside a vintage brass compass and scattered papers with mathematical notations. Warm amber candlelight illuminates the scene from the side. Deep shadows, rich textures, editorial book-jacket aesthetic combining science and literature." width="600" height="780" src="/assets/site-books-writing-hero-image-1.webp" alt="The Invisible Architecture — featured book by Daria, physicist and author">
+          <!-- Decorative: celestial orbit rings over image corner -->
+          <svg class="bwh-deco-orbit" aria-hidden="true" data-no-icon-edit="true" viewBox="0 0 280 280" xmlns="http://www.w3.org/2000/svg">
+            <g fill="none" stroke="rgba(200,151,58,0.22)" stroke-width="0.8">
+              <circle cx="140" cy="140" r="50"></circle>
+              <circle cx="140" cy="140" r="80"></circle>
+              <circle cx="140" cy="140" r="110"></circle>
+              <circle cx="140" cy="140" r="135"></circle>
+              <circle cx="190" cy="140" r="3" fill="rgba(200,151,58,0.4)" stroke="none"></circle>
+              <circle cx="140" cy="60" r="2.5" fill="rgba(200,151,58,0.35)" stroke="none"></circle>
+              <circle cx="80" cy="175" r="2" fill="rgba(200,151,58,0.3)" stroke="none"></circle>
+              <circle cx="220" cy="100" r="2" fill="rgba(200,151,58,0.25)" stroke="none"></circle>
+            </g>
+          </svg>
+          <div class="bwh-image-caption">
+            <span class="bwh-caption-label">Daria</span>
+            <span class="bwh-caption-title">The Invisible Architecture</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</section>
+
+<section class="books-writing-portfolio-section" data-layout-spec="Books &amp; Writing-portfolio">
+  <!-- Decorative ink-script texture -->
+  <div class="bwp-ink-texture" aria-hidden="true"></div>
+
+  <div class="bwp-container">
+    <!-- Section Header -->
+    <header class="bwp-header">
+      <div class="bwp-amber-rule" aria-hidden="true"></div>
+      <p class="bwp-label">Written Works</p>
+      <h2 class="bwp-heading">Books &amp; Writing</h2>
+      <p class="bwp-subheading">From quantum physics to narrative science — a body of work where equations meet prose, and complex ideas find their most human expression.</p>
+    </header>
+
+    <!-- Portfolio Grid -->
+    <div class="bwp-grid">
+
+      <!-- Card 1: Featured Book (wide) -->
+      <article class="bwp-card bwp-card--featured">
+        <div class="bwp-card-image-wrap">
+          <img data-placeholder="books-writing-portfolio-image-1" data-context="A beautifully designed hardcover book with a dark textured cover featuring abstract physics diagrams, waveforms, and constellation patterns in gold foil on deep navy background — editorial science literature photography on a parchment-toned surface with scattered handwritten notes" width="600" height="400" src="/assets/site-books-writing-portfolio-image-1.webp" alt="Daria featured science book cover on parchment surface">
+          <div class="bwp-card-image-overlay" aria-hidden="true"></div>
+          <span class="bwp-badge">Book</span>
+        </div>
+        <div class="bwp-card-body">
+          <div class="bwp-card-meta">
+            <span class="bwp-meta-tag">Physics &amp; Literature</span>
+            <span class="bwp-meta-year">2023</span>
+          </div>
+          <h3 class="bwp-card-title">The Elegant Uncertainty</h3>
+          <p class="bwp-card-desc">A book that traces the philosophical beauty hidden within quantum mechanics — written for curious minds who believe that wonder and rigor are not opposites. Part memoir, part scientific exploration, this work bridges the lab and the library.</p>
+          <div class="bwp-card-footer">
+            <span class="bwp-audience"><i class="fas fa-users" aria-hidden="true"></i> General readers &amp; science enthusiasts</span>
+            <a href="/contact" class="bwp-link">Learn More <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+          </div>
+        </div>
+      </article>
+
+      <!-- Card 2: Essay Collection -->
+      <article class="bwp-card bwp-card--standard">
+        <div class="bwp-card-top">
+          <div class="bwp-card-icon" aria-hidden="true">
+            <svg data-element-type="icon" data-icon-type="svg" width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="4" y="4" width="16" height="20" rx="1" stroke="currentColor" stroke-width="1.5"></rect>
+              <rect x="12" y="8" width="16" height="20" rx="1" stroke="currentColor" stroke-width="1.5"></rect>
+              <line x1="8" y1="10" x2="16" y2="10" stroke="currentColor" stroke-width="1.5"></line>
+              <line x1="8" y1="14" x2="16" y2="14" stroke="currentColor" stroke-width="1.5"></line>
+              <line x1="8" y1="18" x2="14" y2="18" stroke="currentColor" stroke-width="1.5"></line>
+            </svg>
+          </div>
+          <span class="bwp-badge bwp-badge--inline">Essays</span>
+        </div>
+        <div class="bwp-card-meta">
+          <span class="bwp-meta-tag">Science &amp; Culture</span>
+          <span class="bwp-meta-year">2021–2024</span>
+        </div>
+        <h3 class="bwp-card-title">Field Notes on the Universe</h3>
+        <p class="bwp-card-desc">A curated collection of essays exploring the intersections of scientific discovery and everyday human experience — from the thermodynamics of grief to the topology of belonging.</p>
+        <div class="bwp-card-footer">
+          <span class="bwp-audience"><i class="fas fa-users" aria-hidden="true"></i> Academic &amp; literary readers</span>
+          <a href="/contact" class="bwp-link">Read More <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+        </div>
+      </article>
+
+      <!-- Card 3: Longform Articles -->
+      <article class="bwp-card bwp-card--standard">
+        <div class="bwp-card-top">
+          <div class="bwp-card-icon" aria-hidden="true">
+            <svg data-element-type="icon" data-icon-type="svg" width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M6 8 L26 8" stroke="currentColor" stroke-width="1.5"></path>
+              <path d="M6 12 L26 12" stroke="currentColor" stroke-width="1.5"></path>
+              <path d="M6 16 L20 16" stroke="currentColor" stroke-width="1.5"></path>
+              <path d="M6 20 L23 20" stroke="currentColor" stroke-width="1.5"></path>
+              <path d="M6 24 L16 24" stroke="currentColor" stroke-width="1.5"></path>
+              <circle cx="26" cy="22" r="4" stroke="currentColor" stroke-width="1.5"></circle>
+              <path d="M29 25 L31 27" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+            </svg>
+          </div>
+          <span class="bwp-badge bwp-badge--inline">Longform</span>
+        </div>
+        <div class="bwp-card-meta">
+          <span class="bwp-meta-tag">Journalism &amp; Research</span>
+          <span class="bwp-meta-year">Ongoing</span>
+        </div>
+        <h3 class="bwp-card-title">Published Investigations</h3>
+        <p class="bwp-card-desc">Long-form articles published in leading science and culture magazines — each piece built like a scientific paper but written like a story, making rigorous research accessible without sacrificing depth.</p>
+        <div class="bwp-card-footer">
+          <span class="bwp-audience"><i class="fas fa-users" aria-hidden="true"></i> Journalists &amp; curious public</span>
+          <a href="/contact" class="bwp-link">View Articles <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+        </div>
+      </article>
+
+      <!-- Card 4: Science Storytelling -->
+      <article class="bwp-card bwp-card--image-side">
+        <div class="bwp-card-image-wrap bwp-card-image-wrap--small">
+          <img data-placeholder="books-writing-portfolio-image-2" data-context="Close-up of open notebook pages with elegant handwritten scientific equations, physics formulas mixed with flowing literary prose, a fountain pen resting on the page, warm parchment tones, editorial flat lay photography" width="400" height="300" src="/assets/site-books-writing-portfolio-image-2.webp" alt="Handwritten physics equations and literary prose in open notebook">
+        </div>
+        <div class="bwp-card-body">
+          <div class="bwp-card-meta">
+            <span class="bwp-meta-tag">Narrative Science</span>
+            <span class="bwp-meta-year">2022</span>
+          </div>
+          <h3 class="bwp-card-title">Science Storytelling Series</h3>
+          <p class="bwp-card-desc">A multi-part narrative series translating landmark physics discoveries into human stories — the scientists, their doubts, their breakthroughs, and the cultural moments that made them possible.</p>
+          <div class="bwp-card-footer">
+            <span class="bwp-audience"><i class="fas fa-users" aria-hidden="true"></i> Students &amp; educators</span>
+            <a href="/contact" class="bwp-link">Explore Series <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+          </div>
+        </div>
+      </article>
+
+      <!-- Card 5: Literary Reflections -->
+      <article class="bwp-card bwp-card--standard bwp-card--accent">
+        <div class="bwp-card-top">
+          <div class="bwp-card-icon" aria-hidden="true">
+            <svg data-element-type="icon" data-icon-type="svg" width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M8 6 C8 6 10 10 16 10 C22 10 24 6 24 6 L24 26 C24 26 22 22 16 22 C10 22 8 26 8 26 Z" stroke="currentColor" stroke-width="1.5" fill="none"></path>
+              <line x1="16" y1="10" x2="16" y2="22" stroke="currentColor" stroke-width="1" stroke-dasharray="2 2"></line>
+            </svg>
+          </div>
+          <span class="bwp-badge bwp-badge--inline bwp-badge--accent">Personal</span>
+        </div>
+        <div class="bwp-card-meta">
+          <span class="bwp-meta-tag">Literary Nonfiction</span>
+          <span class="bwp-meta-year">2020–2024</span>
+        </div>
+        <h3 class="bwp-card-title">Literary Reflections</h3>
+        <p class="bwp-card-desc">Personal essays and literary meditations on living at the intersection of science and art — what it means to be a physicist who writes poetry, a researcher who tells stories, and a thinker who refuses to choose.</p>
+        <div class="bwp-card-footer">
+          <span class="bwp-audience"><i class="fas fa-users" aria-hidden="true"></i> Writers &amp; intellectuals</span>
+          <a href="/contact" class="bwp-link">Read Reflections <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+        </div>
+      </article>
+
+      <!-- Card 6: Digital Content -->
+      <article class="bwp-card bwp-card--standard">
+        <div class="bwp-card-top">
+          <div class="bwp-card-icon" aria-hidden="true">
+            <svg data-element-type="icon" data-icon-type="svg" width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="3" y="7" width="26" height="18" rx="1" stroke="currentColor" stroke-width="1.5"></rect>
+              <line x1="3" y1="12" x2="29" y2="12" stroke="currentColor" stroke-width="1"></line>
+              <circle cx="8" cy="9.5" r="1" fill="currentColor"></circle>
+              <circle cx="12" cy="9.5" r="1" fill="currentColor"></circle>
+              <circle cx="16" cy="9.5" r="1" fill="currentColor"></circle>
+              <path d="M9 18 L14 15 L14 21 Z" fill="currentColor"></path>
+              <line x1="17" y1="16" x2="24" y2="16" stroke="currentColor" stroke-width="1.5"></line>
+              <line x1="17" y1="20" x2="22" y2="20" stroke="currentColor" stroke-width="1.5"></line>
+            </svg>
+          </div>
+          <span class="bwp-badge bwp-badge--inline">Digital</span>
+        </div>
+        <div class="bwp-card-meta">
+          <span class="bwp-meta-tag">Digital Content</span>
+          <span class="bwp-meta-year">Ongoing</span>
+        </div>
+        <h3 class="bwp-card-title">Digital Science Writing</h3>
+        <p class="bwp-card-desc">Newsletter essays, online columns, and multimedia pieces designed for digital-native audiences — concise, visual, and shareable without sacrificing the intellectual depth that defines Daria's voice.</p>
+        <div class="bwp-card-footer">
+          <span class="bwp-audience"><i class="fas fa-users" aria-hidden="true"></i> Online communities &amp; subscribers</span>
+          <a href="/contact" class="bwp-link">Subscribe <i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+        </div>
+      </article>
+
+      <!-- Card 7: Wide — Collaboration / Commission -->
+      <article class="bwp-card bwp-card--cta-wide">
+        <div class="bwp-cta-wide-content">
+          <div class="bwp-cta-wide-text">
+            <div class="bwp-card-meta">
+              <span class="bwp-meta-tag">Collaboration</span>
+            </div>
+            <h3 class="bwp-card-title">Commission a Piece</h3>
+            <p class="bwp-card-desc">Looking for a science communicator who writes with literary precision? Daria takes on select commissions for books, essays, and longform articles for publishers, institutions, and editorial platforms.</p>
+          </div>
+          <div class="bwp-cta-wide-image">
+            <img data-placeholder="books-writing-portfolio-image-3" data-context="Elegant writing desk scene with stacked books, physics textbooks alongside literary novels, a vintage globe, scattered manuscript pages with equations, warm amber desk lamp light, moody editorial atmosphere suggesting intellectual creative workspace" width="600" height="400" src="/assets/site-books-writing-portfolio-image-3.webp" alt="Intellectual writing workspace with science books and manuscripts">
+          </div>
+        </div>
+        <div class="bwp-cta-wide-footer">
+          <a href="/contact" class="bwp-btn-primary">Get in Touch</a>
+          <span class="bwp-cta-note">Currently accepting commissions for 2025</span>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<section class="books-writing-process-section" data-layout-spec="Books &amp; Writing-process">
+
+  <!-- Decorative background motifs -->
+  <div class="bwp-bg-glow bwp-bg-glow--left" aria-hidden="true"></div>
+  <div class="bwp-bg-glow bwp-bg-glow--right" aria-hidden="true"></div>
+
+  <!-- Ink script texture overlay -->
+  <svg class="bwp-ink-texture" data-no-icon-edit="true" aria-hidden="true" viewBox="0 0 400 600" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+    <g opacity="0.07" fill="none" stroke="#8B7D6B" stroke-width="1">
+      <path d="M10,40 Q80,35 150,42 T300,38 Q360,44 400,40"></path>
+      <path d="M20,70 Q90,65 160,72 T310,68 Q370,74 400,70"></path>
+      <path d="M5,100 Q75,95 145,102 T295,98 Q355,104 400,100"></path>
+      <path d="M15,130 Q85,125 155,132 T305,128 Q365,134 400,130"></path>
+      <path d="M8,160 Q78,155 148,162 T298,158 Q358,164 400,160"></path>
+      <path d="M12,190 Q82,185 152,192 T302,188 Q362,194 400,190"></path>
+      <path d="M18,220 Q88,215 158,222 T308,218 Q368,224 400,220"></path>
+      <path d="M6,250 Q76,245 146,252 T296,248 Q356,254 400,250"></path>
+      <path d="M14,280 Q84,275 154,282 T304,278 Q364,284 400,280"></path>
+      <path d="M22,310 Q92,305 162,312 T312,308 Q372,314 400,310"></path>
+      <path d="M9,340 Q79,335 149,342 T299,338 Q359,344 400,340"></path>
+      <path d="M17,370 Q87,365 157,372 T307,368 Q367,374 400,370"></path>
+      <path d="M11,400 Q81,395 151,402 T301,398 Q361,404 400,400"></path>
+      <path d="M25,430 Q95,425 165,432 T315,428 Q375,434 400,430"></path>
+      <path d="M7,460 Q77,455 147,462 T297,458 Q357,464 400,460"></path>
+      <path d="M19,490 Q89,485 159,492 T309,488 Q369,494 400,490"></path>
+      <path d="M13,520 Q83,515 153,522 T303,518 Q363,524 400,520"></path>
+      <path d="M21,550 Q91,545 161,552 T311,548 Q371,554 400,550"></path>
+    </g>
+  </svg>
+
+  <div class="bwp-container">
+    <div class="bwp-grid">
+
+      <!-- LEFT COLUMN: Explanatory text -->
+      <div class="bwp-text-col">
+        <div class="bwp-section-label">
+          <span class="bwp-amber-rule"></span>
+          <span class="bwp-label-text">The Writing Process</span>
+        </div>
+
+        <h2 class="bwp-heading">Where Equations<br>Become Stories</h2>
+
+        <p class="bwp-lead">Every book begins the same way a physics paper does — with a question that refuses to leave you alone. The process of translating rigorous science into language that breathes and resonates is itself a kind of discovery.</p>
+
+        <div class="bwp-steps">
+
+          <div class="bwp-step">
+            <div class="bwp-step-number">01</div>
+            <div class="bwp-step-content">
+              <h3 class="bwp-step-title">Deep Research</h3>
+              <p class="bwp-step-desc">Each project starts in the laboratory of ideas — journals, field notes, conversations with colleagues, and years of accumulated scientific intuition. No shortcut replaces genuine expertise at the source material.</p>
+            </div>
+          </div>
+
+          <div class="bwp-step">
+            <div class="bwp-step-number">02</div>
+            <div class="bwp-step-content">
+              <h3 class="bwp-step-title">Translating Complexity</h3>
+              <p class="bwp-step-desc">The hardest editorial challenge is preserving the truth of a concept while stripping away the jargon that hides it. Analogies, narrative arcs, and carefully chosen metaphors become the bridge between the equation and the reader.</p>
+            </div>
+          </div>
+
+          <div class="bwp-step">
+            <div class="bwp-step-number">03</div>
+            <div class="bwp-step-content">
+              <h3 class="bwp-step-title">Voice Development</h3>
+              <p class="bwp-step-desc">A voice that holds both scientific precision and literary warmth is rare. It is built through thousands of hours of reading, writing, lecturing, and listening — shaped equally by the physics seminar and the novelist's craft.</p>
+            </div>
+          </div>
+
+          <div class="bwp-step">
+            <div class="bwp-step-number">04</div>
+            <div class="bwp-step-content">
+              <h3 class="bwp-step-title">Audience Connection</h3>
+              <p class="bwp-step-desc">Science becomes culture when readers feel invited rather than tested. Every chapter is calibrated for the curious non-specialist — someone who wants to understand the universe, not just memorise its formulas.</p>
+            </div>
+          </div>
+
+        </div>
+
+        <a href="/contact" class="bwp-cta">Discuss a Collaboration</a>
+      </div>
+
+      <!-- RIGHT COLUMN: Layered composition -->
+      <div class="bwp-visual-col">
+
+        <!-- Manuscript excerpt card -->
+        <div class="bwp-manuscript-card">
+          <div class="bwp-manuscript-header">
+            <span class="bwp-ms-label">Draft — Chapter III</span>
+            <span class="bwp-ms-date">v.2.4</span>
+          </div>
+          <p class="bwp-ms-text">"The wave function does not collapse — it simply chooses, in the moment of observation, which story to tell. And every story, even the ones we call equations, is an act of imagination constrained by truth..."</p>
+          <div class="bwp-ms-annotation">
+            <svg data-no-icon-edit="true" aria-hidden="true" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="7" cy="7" r="6" stroke="#F3A93B" stroke-width="1"></circle><path d="M7 4v3l2 2" stroke="#F3A93B" stroke-width="1" stroke-linecap="round"></path></svg>
+            <span>Revise metaphor — check Bohr correspondence</span>
+          </div>
+        </div>
+
+        <!-- Formula sketch card -->
+        <div class="bwp-formula-card">
+          <div class="bwp-formula-label">Research Note</div>
+          <svg class="bwp-formula-svg" data-no-icon-edit="true" aria-hidden="true" viewBox="0 0 280 120" xmlns="http://www.w3.org/2000/svg">
+            <!-- Waveform line -->
+            <path d="M10,60 Q30,20 50,60 T90,60 T130,60 T170,60 T210,60 T250,60 T280,60" fill="none" stroke="rgba(243,169,59,0.5)" stroke-width="1.5"></path>
+            <!-- Formula text rendered as SVG paths/text -->
+            <text x="10" y="25" font-family="monospace" font-size="11" fill="rgba(247,241,234,0.7)">ψ(x,t) = Ae^i(kx−ωt)</text>
+            <text x="10" y="42" font-family="monospace" font-size="9" fill="rgba(247,241,234,0.4)">∇²ψ + (2m/ℏ²)(E−V)ψ = 0</text>
+            <!-- Orbit ring decoration -->
+            <circle cx="240" cy="30" r="22" fill="none" stroke="rgba(243,169,59,0.2)" stroke-width="1"></circle>
+            <circle cx="240" cy="30" r="14" fill="none" stroke="rgba(243,169,59,0.15)" stroke-width="1"></circle>
+            <circle cx="240" cy="30" r="3" fill="rgba(243,169,59,0.4)"></circle>
+            <!-- Annotation arrow -->
+            <line x1="80" y1="75" x2="80" y2="95" stroke="rgba(243,169,59,0.5)" stroke-width="1"></line>
+            <text x="50" y="110" font-family="monospace" font-size="8" fill="rgba(247,241,234,0.45)">amplitude envelope → narrative arc</text>
+          </svg>
+          <div class="bwp-formula-note">"The structure of a chapter mirrors the structure of a wave."</div>
+        </div>
+
+        <!-- Main supporting image -->
+        <div class="bwp-image-main">
+          <img data-placeholder="books-writing-process-image-1" data-context="A physicist-author at a wooden desk surrounded by open scientific journals, handwritten notes with physics equations, and a manuscript in progress. Warm amber desk lamp light, dark moody atmosphere, intellectual and literary mood. Close-up angle showing the overlap of scientific notation and narrative writing on paper." width="560" height="380" src="/assets/site-books-writing-process-image-1.webp" alt="Daria writing at her desk surrounded by physics notes and manuscript pages">
+          <div class="bwp-image-caption">
+            <svg data-element-type="icon" data-icon-type="svg" width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="1" y="1" width="10" height="10" rx="1" stroke="currentColor" stroke-width="1"></rect><path d="M1 8l3-3 2 2 3-4 2 3" stroke="currentColor" stroke-width="1" stroke-linejoin="round"></path></svg>
+            The writing studio, Tel Aviv
+          </div>
+        </div>
+
+        <!-- Peeking corner image tile -->
+        <div class="bwp-image-peek">
+          <img data-placeholder="books-writing-process-image-2" data-context="Stack of physics and literature books with a pair of reading glasses resting on top, seen from above at an angle. Books include scientific texts and literary novels side by side. Warm tones, moody editorial photography style, dark background." width="280" height="200" src="/assets/site-books-writing-process-image-2.webp" alt="Physics and literature books stacked together representing the intersection of science and storytelling">
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<section class="books-writing-reviews-section" data-layout-spec="Books &amp; Writing-reviews">
+  <!-- Decorative ink-script texture -->
+  <div class="bwr-ink-texture" aria-hidden="true">
+    <svg data-no-icon-edit="true" aria-hidden="true" viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+      <path d="M20,40 Q80,35 140,42 T260,38 Q320,44 380,36" stroke="#8B7D6B" stroke-width="0.8" fill="none" opacity="0.5"></path>
+      <path d="M10,70 Q70,65 130,72 T250,68 Q310,74 390,66" stroke="#8B7D6B" stroke-width="0.6" fill="none" opacity="0.4"></path>
+      <path d="M30,100 Q90,95 150,102 T270,98 Q330,104 380,96" stroke="#8B7D6B" stroke-width="0.8" fill="none" opacity="0.3"></path>
+      <path d="M15,130 Q75,125 135,132 T255,128 Q315,134 385,126" stroke="#8B7D6B" stroke-width="0.5" fill="none" opacity="0.35"></path>
+      <path d="M25,160 Q85,155 145,162 T265,158 Q325,164 375,156" stroke="#8B7D6B" stroke-width="0.7" fill="none" opacity="0.25"></path>
+      <path d="M5,190 Q65,185 125,192 T245,188 Q305,194 395,186" stroke="#8B7D6B" stroke-width="0.6" fill="none" opacity="0.3"></path>
+      <path d="M20,220 Q80,215 140,222 T260,218 Q320,224 380,216" stroke="#8B7D6B" stroke-width="0.8" fill="none" opacity="0.2"></path>
+      <path d="M10,250 Q70,245 130,252 T250,248 Q310,254 390,246" stroke="#8B7D6B" stroke-width="0.5" fill="none" opacity="0.25"></path>
+    </svg>
+  </div>
+
+  <div class="bwr-container">
+    <!-- Section Header -->
+    <div class="bwr-header">
+      <div class="bwr-amber-rule" aria-hidden="true"></div>
+      <h2 class="bwr-heading">What Readers &amp; Colleagues Are Saying</h2>
+      <p class="bwr-subheading">Selected endorsements from readers, educators, cultural figures, and event organizers who have experienced Daria's unique blend of scientific rigour and literary grace.</p>
+    </div>
+
+    <!-- Reviews Grid -->
+    <div class="bwr-reviews-grid">
+
+      <!-- Review Card 1 -->
+      <article class="bwr-review-card">
+        <div class="bwr-quote-mark" aria-hidden="true">“</div>
+        <blockquote class="bwr-quote-text">
+          <p>Daria's writing is a rare phenomenon — she moves between equations and metaphors with the ease of someone who has always lived at the intersection of two worlds. Her book left me with the sensation of having understood something profound about the universe, and about myself.</p>
+        </blockquote>
+        <div class="bwr-amber-separator" aria-hidden="true"></div>
+        <footer class="bwr-attribution">
+          <div class="bwr-attribution-inner">
+            <span class="bwr-reviewer-name">Prof. Elena Hartmann</span>
+            <span class="bwr-reviewer-role">Chair of Theoretical Physics, University of Vienna</span>
+          </div>
+        </footer>
+      </article>
+
+      <!-- Review Card 2 -->
+      <article class="bwr-review-card">
+        <div class="bwr-quote-mark" aria-hidden="true">“</div>
+        <blockquote class="bwr-quote-text">
+          <p>I've attended hundreds of lectures, but Daria's talk on quantum uncertainty and creative doubt was unlike anything I'd ever witnessed. The audience sat in complete silence — not from confusion, but from awe. She is the kind of speaker who changes how you see the world.</p>
+        </blockquote>
+        <div class="bwr-amber-separator" aria-hidden="true"></div>
+        <footer class="bwr-attribution">
+          <div class="bwr-attribution-inner">
+            <span class="bwr-reviewer-name">Marcus Delacroix</span>
+            <span class="bwr-reviewer-role">Director, International Science &amp; Society Forum</span>
+          </div>
+        </footer>
+      </article>
+
+      <!-- Review Card 3 -->
+      <article class="bwr-review-card">
+        <div class="bwr-quote-mark" aria-hidden="true">“</div>
+        <blockquote class="bwr-quote-text">
+          <p>Her podcast is the only one I recommend to both my literature students and my physics colleagues. Daria has an extraordinary gift for making the most complex ideas feel intimate and alive. Each episode is a small masterpiece of intellectual storytelling.</p>
+        </blockquote>
+        <div class="bwr-amber-separator" aria-hidden="true"></div>
+        <footer class="bwr-attribution">
+          <div class="bwr-attribution-inner">
+            <span class="bwr-reviewer-name">Dr. Yael Ostrovsky</span>
+            <span class="bwr-reviewer-role">Author &amp; Cultural Educator, Tel Aviv University</span>
+          </div>
+        </footer>
+      </article>
+
+    </div>
+    <!-- End Reviews Grid -->
+
+  </div>
+</section>
+  </main>
+  
+  <footer class="site-footer"><div class="footer-inner"><div class="footer-top"><div class="footer-col footer-col--brand"><div class="footer-logo-wrap"><img src="/assets/daria-logo.webp" alt="Daria" class="logo" /></div><p class="footer-tagline">Where physics, literature, and storytelling converge — a premium intellectual world built for curious minds.</p><div class="footer-social"></div></div><div class="footer-col footer-col--links"><h4 class="footer-heading">Navigation</h4><ul class="footer-nav"><li><a href="/">Home</a></li><li><a href="/about">About</a></li><li><a href="/books-writing">Books &amp; Writing</a></li><li><a href="/speaking">Speaking</a></li><li><a href="/podcast">Podcast</a></li><li><a href="/contact">Contact</a></li></ul></div><div class="footer-col footer-col--contact"><h4 class="footer-heading">Contact</h4><ul class="footer-contact"><li><span class="contact-icon"><i class="fas fa-envelope"></i></span><span class="contact-text"><a href="mailto:[business_email]">[business_email]</a></span></li><li><span class="contact-icon"><i class="fas fa-phone"></i></span><span class="contact-text"><a href="tel:[business_phone]">[business_phone]</a></span></li><li><a href="/"><span class="contact-icon"><i class="fas fa-map-marker-alt"></i></span><span class="contact-text">[business_address]</span></a></li></ul></div><div class="footer-col footer-col--extra"><h4 class="footer-heading">Explore</h4><p class="footer-extra-text">Dive into a world where science meets storytelling. Join the community of lifelong learners.</p><div class="footer-accent-line"></div><p class="footer-extra-label">חינוך · מדע · תוכן דיגיטלי</p></div></div><div class="footer-bottom"><div class="footer-bottom-left"><span class="footer-copyright">© 2026 Daria. All rights reserved.</span></div><div class="footer-bottom-right"><nav class="footer-legal"><a href="/privacy">Privacy Policy</a><span class="footer-sep">·</span><a href="/terms">Terms &amp; Conditions</a><span class="footer-sep">·</span><a href="/accessibility">Accessibility</a></nav><a href="https://zappy5.com" target="_blank" class="zappy-attribution">Generated by Zappy</a></div></div></div><div class="footer-waveform" aria-hidden="true"><svg viewBox="0 0 1200 60" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg"><polyline points="0,40 30,28 60,38 90,20 120,35 150,15 180,32 210,22 240,38 270,18 300,34 330,24 360,40 390,16 420,30 450,20 480,36 510,14 540,32 570,22 600,38 630,18 660,34 690,24 720,40 750,16 780,30 810,20 840,36 870,14 900,32 930,22 960,38 990,18 1020,34 1050,24 1080,40 1110,16 1140,30 1170,20 1200,36" fill="none" stroke="rgba(243,169,59,0.18)" stroke-width="1.5"></polyline><polyline points="0,50 40,38 80,48 120,30 160,45 200,25 240,42 280,32 320,50 360,26 400,44 440,34 480,50 520,24 560,42 600,30 640,48 680,26 720,44 760,34 800,50 840,24 880,42 920,30 960,48 1000,26 1040,44 1080,34 1120,50 1160,24 1200,42" fill="none" stroke="rgba(123,63,228,0.12)" stroke-width="1"></polyline></svg></div></footer>
+  
+  
+  
+  <div data-integration="accessibility:toolbar"></div>
+
+    <script src="/script.js"></script>
+
+    <script id="zappy-mobile-submenu-script">
+    (function() {
+      function initMobileSubmenuToggles() {
+        if (window.innerWidth > 768) {
+          document.querySelectorAll('.mobile-submenu-toggle').forEach(function(btn) { btn.remove(); });
+          document.querySelectorAll('.sub-menu.mobile-expanded').forEach(function(menu) { menu.classList.remove('mobile-expanded'); });
+          return;
+        }
+        var items = document.querySelectorAll('.nav-menu li:has(.sub-menu), nav li:has(.sub-menu), .navbar li:has(.sub-menu), #navMenu li:has(.sub-menu)');
+        items.forEach(function(li) {
+          if (li.querySelector('.mobile-submenu-toggle')) return;
+          var submenu = li.querySelector('.sub-menu');
+          var parentLink = li.querySelector(':scope > a');
+          if (!submenu || !parentLink) return;
+          var toggleBtn = document.createElement('button');
+          toggleBtn.className = 'mobile-submenu-toggle';
+          toggleBtn.setAttribute('aria-label', 'Toggle submenu');
+          toggleBtn.setAttribute('type', 'button');
+          parentLink.insertAdjacentElement('afterend', toggleBtn);
+          toggleBtn.addEventListener('click', function(e) {
+            e.preventDefault(); e.stopPropagation();
+            document.querySelectorAll('.sub-menu.mobile-expanded').forEach(function(menu) {
+              if (menu !== submenu) { menu.classList.remove('mobile-expanded'); var t = menu.parentElement.querySelector('.mobile-submenu-toggle'); if(t) t.classList.remove('expanded'); }
+            });
+            submenu.classList.toggle('mobile-expanded');
+            toggleBtn.classList.toggle('expanded');
+          });
+        });
+      }
+      if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', initMobileSubmenuToggles); }
+      else { initMobileSubmenuToggles(); }
+      var resizeTimer; window.addEventListener('resize', function() { clearTimeout(resizeTimer); resizeTimer = setTimeout(initMobileSubmenuToggles, 250); });
+      // Re-initialize when mobile menu becomes visible (MutationObserver)
+      var observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+          if (mutation.type === 'attributes') {
+            var target = mutation.target;
+            if (target.classList && (target.classList.contains('active') || target.classList.contains('open'))) {
+              setTimeout(initMobileSubmenuToggles, 100);
+            }
+          }
+        });
+      });
+      setTimeout(function() {
+        document.querySelectorAll('.mobile-menu, .nav-menu, #navMenu, nav').forEach(function(menu) {
+          observer.observe(menu, { attributes: true, attributeFilter: ['class', 'style'] });
+        });
+      }, 500);
+    })();
+    </script>
+
+    <script id="zappy-navbar-scroll-effect">
+    (function(){
+      var nb=document.querySelector('nav.navbar,.navbar:not(.zappy-catalog-menu)');
+      var cm=document.querySelector('.zappy-catalog-menu,#zappy-catalog-menu');
+      if(!nb)return;
+      var fb='rgba(231,221,210,0.85)';
+      var th=60;
+      var rs=getComputedStyle(document.documentElement);
+      var td=rs.getPropertyValue('--text-dark').trim()||'#1a1a1a';
+      var tl=rs.getPropertyValue('--text-light').trim()||'#ffffff';
+      var st=true?td:tl;
+      nb.style.transition='background 0.3s ease,backdrop-filter 0.3s ease,-webkit-backdrop-filter 0.3s ease,box-shadow 0.3s ease';
+      if(cm)cm.style.transition='background 0.3s ease,backdrop-filter 0.3s ease,-webkit-backdrop-filter 0.3s ease';
+      var neSel='a,.navbar-brand,.navbar-brand a,.dropdown-toggle,.mobile-toggle,.phone-header-btn,.mobile-hamburger-btn,.mobile-close-btn,.mobile-submenu-toggle,.nav-link';
+      var skipCls=['cart-link','login-link','nav-search-toggle','search-toggle'];
+      function sTC(c,clr){var els=c.querySelectorAll(neSel);for(var i=0;i<els.length;i++){var sk=false;if(els[i].closest('.sub-menu')||els[i].closest('.dropdown-menu')){sk=true;}for(var j=0;j<skipCls.length;j++){if(els[i].classList.contains(skipCls[j])){sk=true;break;}}if(!sk)els[i].style.setProperty('color',clr,'important');}}
+      function cTC(c){var els=c.querySelectorAll(neSel);for(var i=0;i<els.length;i++){if(els[i].closest('.sub-menu')||els[i].closest('.dropdown-menu'))continue;els[i].style.removeProperty('color');}}
+      function applyScrolled(){
+        nb.classList.add('scrolled');
+        if(window.innerWidth>768){
+          nb.style.setProperty('--frosted-text',st);
+          nb.style.setProperty('background-image','none','important');
+          nb.style.setProperty('background-color',fb,'important');
+          nb.style.backdropFilter='blur(12px)';nb.style.webkitBackdropFilter='blur(12px)';nb.style.boxShadow='0 2px 16px rgba(0,0,0,0.12)';
+          sTC(nb,st);
+        }
+        if(cm){cm.classList.add('scrolled');if(window.innerWidth>768){cm.style.setProperty('background',fb,'important');cm.style.setProperty('backdrop-filter','blur(12px)','important');cm.style.setProperty('-webkit-backdrop-filter','blur(12px)','important');sTC(cm,st);}}
+      }
+      function onS(){
+        if(window._zappyNavNoDarkHero) return;
+        if(window.innerWidth<=768){nb.classList.remove('scrolled');cTC(nb);if(cm){cm.classList.remove('scrolled');cTC(cm);}return;}
+        var y=window.scrollY||window.pageYOffset;
+        if(y>th){
+          nb.classList.add('scrolled');nb.style.setProperty('background-color',fb,'important');nb.style.setProperty('background-image','none','important');
+          nb.style.setProperty('--frosted-text',st);nb.style.backdropFilter='blur(12px)';nb.style.webkitBackdropFilter='blur(12px)';nb.style.boxShadow='0 2px 16px rgba(0,0,0,0.12)';
+          sTC(nb,st);
+          if(cm){cm.classList.add('scrolled');cm.style.setProperty('background',fb,'important');cm.style.setProperty('backdrop-filter','blur(12px)','important');cm.style.setProperty('-webkit-backdrop-filter','blur(12px)','important');sTC(cm,st);}
+        }else{
+          nb.classList.remove('scrolled');nb.style.setProperty('background-color','transparent','important');nb.style.removeProperty('background-image');
+          nb.style.removeProperty('--frosted-text');nb.style.backdropFilter='none';nb.style.webkitBackdropFilter='none';nb.style.boxShadow='none';
+          cTC(nb);
+          if(cm){cm.classList.remove('scrolled');cm.style.setProperty('background','transparent','important');cm.style.setProperty('backdrop-filter','none','important');cm.style.setProperty('-webkit-backdrop-filter','none','important');cTC(cm);}
+        }
+      }
+      function sLum(rv,gv,bv){rv/=255;gv/=255;bv/=255;rv=rv<=0.03928?rv/12.92:Math.pow((rv+0.055)/1.055,2.4);gv=gv<=0.03928?gv/12.92:Math.pow((gv+0.055)/1.055,2.4);bv=bv<=0.03928?bv/12.92:Math.pow((bv+0.055)/1.055,2.4);return 0.2126*rv+0.7152*gv+0.0722*bv;}
+      window.addEventListener('scroll',onS,{passive:true});
+      window.addEventListener('resize',onS,{passive:true});
+      onS();
+      var heroEl=document.querySelector('section[class*="hero"],[data-hero-type],main>section:first-child');
+      var hasDH=false;
+      if(heroEl){var hCs=getComputedStyle(heroEl);var hBI=hCs.backgroundImage;if(hBI&&hBI!=='none'){if(hBI.indexOf('url(')!==-1){var hM2=hCs.backgroundColor.match(/\d+/g);if(hM2&&hM2.length>=3){hasDH=sLum(parseInt(hM2[0]),parseInt(hM2[1]),parseInt(hM2[2]))<0.4;}else{hasDH=true;}}else if(hBI.indexOf('gradient')!==-1){var cM=hBI.match(/rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/g);if(cM&&cM.length>0){var tLm=0;for(var ci=0;ci<cM.length;ci++){var pts=cM[ci].match(/\d+/g);tLm+=sLum(parseInt(pts[0]),parseInt(pts[1]),parseInt(pts[2]));}hasDH=(tLm/cM.length)<0.4;}else{hasDH=true;}}else{hasDH=true;}}else{var hM=hCs.backgroundColor.match(/\d+/g);if(hM&&hM.length>=3){hasDH=sLum(parseInt(hM[0]),parseInt(hM[1]),parseInt(hM[2]))<0.4;}}}
+      if(!hasDH){window.removeEventListener('scroll',onS);window.removeEventListener('resize',onS);applyScrolled();window._zappyNavNoDarkHero=true;}
+    })();
+    </script>
+</body>
+</html>
