@@ -3304,16 +3304,15 @@ html[dir="rtl"] .footer-contact li > a { flex-direction: row !important; }
   box-shadow: 0 24px 72px rgba(26,21,32,0.25);
 }
 
-/* Card image wrap */
 .home-showcase-section .showcase-card-image-wrap {
   position: relative;
   overflow: hidden;
   width: 100%;
-  aspect-ratio: 3/2;
+  aspect-ratio: 2/3;
 }
 
 .home-showcase-section .showcase-card-image-wrap--short {
-  aspect-ratio: 16/9;
+  aspect-ratio: 3/4;
 }
 
 .home-showcase-section .showcase-card-image-wrap img {
